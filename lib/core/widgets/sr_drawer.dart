@@ -16,15 +16,16 @@ class _SrDrawerState extends State<SrDrawer> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: const [
-          /// Header (optional future use)
+          /// >>>> Header
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue,),
             child: Text("Settings Menu", style: TextStyle(color: Colors.white, fontSize: 20,),),
           ),
 
-          /// >>> Biometric Lock Tile =========================
+          // >>> Biometric Lock Tile ===========================================
           BiometricSwitchTile(),
           Divider(),
+          // <<< Biometric Lock Tile ===========================================
         ],
       ),
     );

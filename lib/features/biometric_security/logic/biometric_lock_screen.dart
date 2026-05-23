@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../pin_fallback_screen/pin_lock_screen.dart';
 import 'biometric_service.dart';
 
 class BiometricLockScreen extends StatefulWidget {
@@ -36,9 +37,11 @@ class _BiometricLockScreenState extends State<BiometricLockScreen> with SingleTi
   Future<void> _authenticate() async {
     final result = await BiometricService.authenticate();
     if (result) {
-      setState(() {
-        authenticated = true;
-      });
+      setState(() {authenticated = true;});
+    }else {
+      // >>>> fallback to PIN screen
+      if(!mounted) return;
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PinLockScreen(child: widget.child),),);
     }
   }
   // <<< If authentication is successful then unlock the app ===================
