@@ -254,10 +254,12 @@ class HiveService {
     Hive.init(dir.path);
     await Future.wait([
       Hive.openBox("biometric_box"),
+      Hive.openBox('pin_box'),
     ]);
   }
   /// >>>> Access All box ======================================================
   static Box get biometricBox => Hive.box('biometric_box');
+  static Box get pinBox => Hive.box('pin_box');
   /// <<<< Access All box ======================================================
 }
 ```
