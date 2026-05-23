@@ -1,0 +1,1 @@
+enum ReminderType { today, afterDays, nextWeek, custom,}
