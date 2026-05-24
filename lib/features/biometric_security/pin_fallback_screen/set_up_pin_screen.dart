@@ -79,17 +79,17 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                     children: [
                       // >>> Lock Icon =========================================
                       Container(
-                        height: 90,
-                        width: 90,
+                        height: 80,
+                        width: 80,
                         decoration: BoxDecoration(shape: BoxShape.circle, gradient: const LinearGradient(colors: [Color(0xff7C3AED), Color(0xff2563EB),],), boxShadow: [BoxShadow(color: Colors.blue.withValues(alpha: .4), blurRadius: 25, spreadRadius: 2,),],),
-                        child: const Icon(Icons.lock_rounded, color: Colors.white, size: 45,),
+                        child: const Icon(Icons.lock_rounded, color: Colors.white, size: 40,),
                       ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack,),
                       // <<< Lock Icon =========================================
 
                       const SizedBox(height: 28),
 
                       // >>> Title =============================================
-                      const Text("Create Security PIN", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: .5,),),
+                      const Text("Create Security PIN", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: .5,),),
                       // <<< Title =============================================
 
                       const SizedBox(height: 10),
@@ -106,21 +106,21 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
                         defaultPinTheme: PinTheme(
-                          width: 72,
-                          height: 72,
+                          width: 50,
+                          height: 50,
                           textStyle: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white,),
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), color: Colors.white.withValues(alpha: .06), border: Border.all(color: Colors.white.withValues(alpha: .08), width: 1.5,),),
                         ),
                         focusedPinTheme: PinTheme(
-                          width: 72,
-                          height: 72,
+                          width: 50,
+                          height: 50,
                           textStyle: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white,),
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), gradient: const LinearGradient(colors: [Color(0xff2563EB), Color(0xff7C3AED),],), boxShadow: [BoxShadow(color: Colors.blue.withValues(alpha: .4), blurRadius: 18, spreadRadius: 1,),],),
                         ),
 
                         submittedPinTheme: PinTheme(
-                          width: 72,
-                          height: 72,
+                          width: 50,
+                          height: 50,
                           textStyle: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white,),
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), color: const Color(0xff1E293B), border: Border.all(color: Colors.greenAccent, width: 1.8,),),
                         ),
@@ -133,7 +133,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                       // >>> Button ============================================
                       SizedBox(
                         width: double.infinity,
-                        height: 60,
+                        height: 40,
                         child: ElevatedButton(
                           onPressed: isLoading ? null : savePin,
                           style: ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),), padding: EdgeInsets.zero,),
@@ -142,7 +142,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                             child: Center(
                               child: isLoading ?
                               const SizedBox(height: 25, width: 25, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white,),) :
-                              const Text("Save Secure PIN", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: .4,),),
+                              const Text("Save Secure PIN", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: .4,),),
                             ),
                           ),
                         ),
