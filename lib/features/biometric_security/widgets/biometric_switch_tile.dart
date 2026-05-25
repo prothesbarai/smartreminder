@@ -27,7 +27,7 @@ class BiometricSwitchTile extends StatelessWidget {
         onChanged: (value) async {
           if (value) {
             // >>> First check if there is a PIN
-            final pin = HiveService.pinBox.get('pin');
+            final pin = HiveService.biometricPinAutoLockBox.get('pin');
 
             if (pin == null || pin.toString().isEmpty) {
               // >>> If there is no PIN, it will go to the Setup screen
@@ -36,7 +36,7 @@ class BiometricSwitchTile extends StatelessWidget {
               }
 
               // >>> Re-check again (whether the user has set the PIN)
-              final newPin = HiveService.pinBox.get('pin');
+              final newPin = HiveService.biometricPinAutoLockBox.get('pin');
               if (newPin == null || newPin.toString().isEmpty) {
                 return; // >>> Biometrics will not be enabled if you do not set a PIN
               }

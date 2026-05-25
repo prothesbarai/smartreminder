@@ -24,7 +24,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   @override
   void initState() {
     super.initState();
-    correctPin = HiveService.pinBox.get('pin', defaultValue: '1234',);
+    correctPin = HiveService.biometricPinAutoLockBox.get('pin', defaultValue: '1234',);
   }
 
 

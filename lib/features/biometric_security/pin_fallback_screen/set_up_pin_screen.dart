@@ -26,7 +26,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
     }
     setState(() {isLoading = true;});
     await Future.delayed(const Duration(milliseconds: 700));
-    await HiveService.pinBox.put('pin', pinController.text);
+    await HiveService.biometricPinAutoLockBox.put('pin', pinController.text);
     if (!mounted) return;
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
   }

@@ -8,7 +8,7 @@ class BiometricProvider extends ChangeNotifier {
 
   /// >>> Init =================================================================
   Future<void> init() async {
-    _enabled = HiveService.biometricBox.get('enabled', defaultValue: false,);
+    _enabled = HiveService.biometricPinAutoLockBox.get('enabled', defaultValue: false,);
     notifyListeners();
   }
   /// <<< Init =================================================================
@@ -16,7 +16,7 @@ class BiometricProvider extends ChangeNotifier {
   /// >>> Toggle ===============================================================
   Future<void> setEnabled(bool value) async {
     _enabled = value;
-    await HiveService.biometricBox.put('enabled', value,);
+    await HiveService.biometricPinAutoLockBox.put('enabled', value,);
     notifyListeners();
   }
   /// <<< Toggle ===============================================================
