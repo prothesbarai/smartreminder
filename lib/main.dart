@@ -9,6 +9,7 @@ import 'features/biometric_security/biometric_guard.dart';
 import 'features/reminder_generate/providers/reminder_provider.dart';
 import 'features/reminder_generate/services/notification_service.dart';
 import 'features/biometric_security/logic/biometric_provider.dart';
+import 'features/schedule_suggest/providers/schedule_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,10 @@ void main() async {
         // >>>> Bio-Metrics Feature Provider ===================================
         ChangeNotifierProvider.value(value: biometricProvider),
         // <<<< Bio-Metrics Feature Provider ===================================
+
+        // >>>> Schedule Suggest Provider ======================================
+        ChangeNotifierProvider(create: (_) => ScheduleProvider(),),
+        // <<<< Schedule Suggest Provider ======================================
       ],
       child: const ProthesApp(),
     ),
