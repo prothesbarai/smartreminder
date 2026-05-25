@@ -53,12 +53,12 @@ class _RemainderFormScreenPopupState extends State<RemainderFormScreenPopup> {
           mainAxisSize: MainAxisSize.min,
           children: [
 
-            // >>>> TITLE INPUT ========================================
+            // >>>> TITLE INPUT ================================================
             PremiumInputField(controller: titleController, label: "Reminder Title", icon: Icons.title,),
             const SizedBox(height: 10),
-            // >>>> TITLE INPUT ========================================
+            // >>>> TITLE INPUT ================================================
 
-            // >>>> TIME PICKER ========================================
+            // >>>> TIME PICKER ================================================
             GestureDetector(
               onTap: () async{
                 final time = await showTimePicker(context: context, initialTime: selectedTime ?? TimeOfDay.now(),);
@@ -74,9 +74,9 @@ class _RemainderFormScreenPopupState extends State<RemainderFormScreenPopup> {
               ),
             ),
             const SizedBox(height: 10),
-            // <<<< TIME PICKER ========================================
+            // <<<< TIME PICKER ================================================
 
-            // >>>> DROPDOWN ===========================================
+            // >>>> DROPDOWN ===================================================
             DropdownButton<ReminderType>(
               value: selectedType,
               isExpanded: true,
@@ -88,10 +88,10 @@ class _RemainderFormScreenPopupState extends State<RemainderFormScreenPopup> {
                 DropdownMenuItem(value: ReminderType.custom, child: Text("Custom Date")),
               ],
             ),
-            // <<<< DROPDOWN ===========================================
+            // <<<< DROPDOWN ===================================================
 
 
-            // >>>> AFTER DAYS INPUT ===================================
+            // >>>> AFTER DAYS INPUT ===========================================
             if (selectedType == ReminderType.afterDays)...[
               TextField(
                 controller: afterDaysController,
@@ -100,10 +100,10 @@ class _RemainderFormScreenPopupState extends State<RemainderFormScreenPopup> {
                 decoration: const InputDecoration(labelText: "After how many days?",),
               ),
             ],
-            // <<<< AFTER DAYS INPUT ===================================
+            // <<<< AFTER DAYS INPUT ===========================================
 
 
-            // >>>> CUSTOM DATE PICKER =================================
+            // >>>> CUSTOM DATE PICKER =========================================
             if (selectedType == ReminderType.custom)...[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,22 +123,22 @@ class _RemainderFormScreenPopupState extends State<RemainderFormScreenPopup> {
               ),
             ],
             const SizedBox(height: 10),
-            // <<<< CUSTOM DATE PICKER =================================
+            // <<<< CUSTOM DATE PICKER =========================================
           ],
         ),
       ),
 
       actions: [
 
-        // >>>> CANCEL BUTTON ==========================================
+        // >>>> CANCEL BUTTON ==================================================
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF518BCF), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
           onPressed: () {Navigator.pop(context);},
           child: Text("Cancel",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),),
         ),
-        // <<<< CANCEL BUTTON ==========================================
+        // <<<< CANCEL BUTTON ==================================================
 
-        // >>>> ADD BUTTON =============================================
+        // >>>> ADD BUTTON =====================================================
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C63FF), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
           onPressed: () {
@@ -161,7 +161,7 @@ class _RemainderFormScreenPopupState extends State<RemainderFormScreenPopup> {
           },
           child: Text(widget.isEdit ? "Update Reminder" : "Add Reminder",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),),
         ),
-        // <<<< ADD BUTTON =============================================
+        // <<<< ADD BUTTON =====================================================
       ],
     );
   }
