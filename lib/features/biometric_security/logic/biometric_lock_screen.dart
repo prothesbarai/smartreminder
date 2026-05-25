@@ -12,30 +12,45 @@ class BiometricLockScreen extends StatefulWidget {
   State<BiometricLockScreen> createState() => _BiometricLockScreenState();
 }
 
-class _BiometricLockScreenState extends State<BiometricLockScreen> with SingleTickerProviderStateMixin {
+class _BiometricLockScreenState extends State<BiometricLockScreen> with SingleTickerProviderStateMixin,WidgetsBindingObserver {
 
   bool authenticated = false;
   late AnimationController _controller;
   late Animation<double> _fade;
-
+  DateTime? _lastAuthTime;
+  bool _isAuthenticating = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward();
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut,);
+    // >>> App LifeCycle Observer ==============================================
+    WidgetsBinding.instance.addObserver(this);
+    // <<< App LifeCycle Observer ==============================================
     _authenticate();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    // >>> App LifeCycle Observer ==============================================
+    WidgetsBinding.instance.removeObserver(this);
+    // <<< App LifeCycle Observer ==============================================
     super.dispose();
   }
 
   // >>> If authentication is successful then unlock the app ===================
   Future<void> _authenticate() async {
+    // >>> For Auto Lock Purpose ===============================================
+    if (_lastAuthTime != null && DateTime.now().difference(_lastAuthTime!).inSeconds < 3) {return;}
+    if (_isAuthenticating) return;
+    _isAuthenticating = true;
+    _lastAuthTime = DateTime.now();
+    // <<< For Auto Lock Purpose ===============================================
+
     final result = await BiometricService.authenticate();
+    if (!mounted) return;
     if (result) {
       setState(() {authenticated = true;});
     }else {
@@ -43,9 +58,24 @@ class _BiometricLockScreenState extends State<BiometricLockScreen> with SingleTi
       if(!mounted) return;
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PinLockScreen(child: widget.child),),);
     }
+    _isAuthenticating = false;
   }
   // <<< If authentication is successful then unlock the app ===================
 
+
+  // >>> Auto Lock Logic Implements By WidgetsBindingObserver ==================
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      setState(() {
+        authenticated = false; // >>> lock app
+      });
+    }
+    if (state == AppLifecycleState.resumed) {
+      _authenticate(); // >>> re-check biometric
+    }
+  }
+  // <<< Auto Lock Logic Implements By WidgetsBindingObserver ==================
 
   @override
   Widget build(BuildContext context) {
