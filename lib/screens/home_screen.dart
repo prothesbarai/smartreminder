@@ -4,7 +4,7 @@ import 'package:smartreminder/core/widgets/sr_drawer.dart';
 import '../core/config/config.dart';
 import '../core/widgets/exit_app_alert_dialogue.dart';
 import '../core/widgets/sr_app_bar.dart';
-import '../features/reminder_generate/screens/reminder_screen.dart';
+import '../features/reminder_generate/screens/reminder_list_screen.dart';
 import '../features/reminder_generate/widgets/reminder_form_popup.dart';
 import '../features/schedule_suggest/screens/schedule_screen.dart';
 
@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   int currentIndex = 0;
-  final screens = const [ReminderScreen(),ScheduleScreen()];
+  final screens = const [ReminderListScreen(),ScheduleScreen()];
   void onTabChange(int index){setState(() {currentIndex = index;});}
 
   // >>> Every Page AppBar Title and Icon ======================================

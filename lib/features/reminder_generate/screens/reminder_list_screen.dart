@@ -3,14 +3,14 @@ import 'package:provider/provider.dart';
 import '../providers/reminder_provider.dart';
 import '../widgets/reminder_form_popup.dart';
 
-class ReminderScreen extends StatefulWidget {
-  const ReminderScreen({super.key});
+class ReminderListScreen extends StatefulWidget {
+  const ReminderListScreen({super.key});
 
   @override
-  State<ReminderScreen> createState() => _ReminderScreenState();
+  State<ReminderListScreen> createState() => _ReminderListScreenState();
 }
 
-class _ReminderScreenState extends State<ReminderScreen> {
+class _ReminderListScreenState extends State<ReminderListScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -50,39 +50,48 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2,),
                     minLeadingWidth: 10,
                     leading: const Center(widthFactor: 1, child: Icon(Icons.alarm, color: Color(0xFF6C63FF), size: 22,),),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                    title: Row(
                       children: [
-                        Text(item.title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14,),),
-                        const SizedBox(height: 4),
-                        Text(item.time, style: TextStyle(fontSize: 12, color: Colors.grey.shade600,),),
-
-                        const SizedBox(height: 6),
-
-                        if (isCompleted)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(colors: [Color(0xFF00B894), Color(0xFF00CEC9),],),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [BoxShadow(color: const Color(0xFF00B894).withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 4),),],
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.check_circle, color: Colors.white, size: 12,),
-                                SizedBox(width: 4),
-                                Text("Completed", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.3,),),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(item.title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14,),),
+                            const SizedBox(height: 4),
+                            Text(item.time, style: TextStyle(fontSize: 12, color: Colors.grey.shade600,),),
+                          ],
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              if (isCompleted)...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(colors: [Color(0xFF00B894), Color(0xFF00CEC9),],),
+                                    borderRadius: BorderRadius.circular(30),
+                                    boxShadow: [BoxShadow(color: const Color(0xFF00B894).withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 4),),],
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.check_circle, color: Colors.white, size: 12,),
+                                      SizedBox(width: 4),
+                                      Text("Completed", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.3,),),
+                                    ],
+                                  ),
+                                )
+                              ]
+                              else...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
+                                  decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(30),),
+                                  child: const Text("Pending", style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.w700,),),
+                                ),
                               ],
-                            ),
+                            ],
                           )
-                        else
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
-                            decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(30),),
-                            child: const Text("Pending", style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.w700,),),
-                          ),
+                        )
                       ],
                     ),
 
@@ -94,8 +103,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
                           constraints: const BoxConstraints(),
                           icon: const Icon(Icons.edit, color: Colors.blue, size: 20,),
                           onPressed: () {
-                            /*titleController.text = item.title;
-                                    afterDaysController.text = item.afterDays?.toString() ?? '';*/
                             provider.startEdit(item, index);
                             ReminderFormPopup.show(context, isEdit: true);
                           },
