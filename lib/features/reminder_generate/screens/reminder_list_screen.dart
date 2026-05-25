@@ -32,7 +32,7 @@ class _ReminderListScreenState extends State<ReminderListScreen> {
           behavior: HitTestBehavior.opaque,
           child: Container(
             child: provider.remindersHive.isEmpty ?
-            Center(child: Column(mainAxisAlignment : MainAxisAlignment.center,children: [Icon(Icons.notifications_none_rounded, size: 70, color: Colors.grey,), SizedBox(height: 10), Text("No reminders yet"),],),):
+            Center(child: Column(mainAxisAlignment : MainAxisAlignment.center,children: [Icon(Icons.notifications_none_rounded, size: 70, color: Colors.grey,), SizedBox(height: 10), Text("No reminders yet",style: TextStyle(color: Colors.grey),),],),):
             ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
