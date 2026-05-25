@@ -28,17 +28,18 @@ class _HomeScreenState extends State<HomeScreen> {
         return SrAppBar(
           appBarTitle: "Reminder",
           actions: [
-            IconButton(
-              icon: const Icon(Icons.add_alert),
-              onPressed: () {
-                ReminderFormPopup.show(context, isEdit: false);
-              },
-            ),
+            IconButton(icon: const Icon(Icons.add_alert), onPressed: () {ReminderFormPopup.show(context, isEdit: false);},),
             const SizedBox(width: 10),
           ],
         );
       case 1:
-        return const SrAppBar(appBarTitle: "Schedule", actions: [Icon(Icons.calendar_month), SizedBox(width: 10),],);
+        return SrAppBar(
+          appBarTitle: "Schedule",
+          actions: [
+            IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {},),
+            const SizedBox(width: 10),
+          ],
+        );
       default:
         return const SrAppBar(appBarTitle: "Smart Reminder");
     }

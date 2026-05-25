@@ -112,6 +112,9 @@ void main() async {
   );
 }
 ```
+
+📍 `hive_service.dart`
+
 ```dart
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -132,6 +135,11 @@ class HiveService {
   static Box<ReminderHiveModel> get remainderBox => Hive.box<ReminderHiveModel>('reminder_box');
 /// <<<< Access All box ======================================================
 }
+```
+- Remainder Form PopUp Call From Any Add Button
+
+```dart
+ReminderFormPopup.show(context, isEdit: false);
 ```
 
 ---
