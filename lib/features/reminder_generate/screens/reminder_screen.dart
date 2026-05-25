@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../../core/widgets/premium_input_field.dart';
 import '../providers/reminder_provider.dart';
-import '../utils/reminder_type.dart';
+import '../widgets/reminder_form_popup.dart';
 
 class ReminderScreen extends StatefulWidget {
   const ReminderScreen({super.key});
@@ -13,28 +11,6 @@ class ReminderScreen extends StatefulWidget {
 }
 
 class _ReminderScreenState extends State<ReminderScreen> {
-
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController afterDaysController = TextEditingController();
-
-  // >>> Pick Time Function ====================================================
-  Future<void> pickTime(BuildContext context) async {
-    final provider =
-    Provider.of<ReminderProvider>(context, listen: false);
-    final TimeOfDay? time = await showTimePicker(context: context, initialTime: TimeOfDay.now(),);
-    if (!context.mounted || time == null) return;
-    provider.setTime(time);
-  }
-  // <<< Pick Time Function ====================================================
-
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    afterDaysController.dispose();
-    super.dispose();
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -48,224 +24,104 @@ class _ReminderScreenState extends State<ReminderScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           provider.loadReminders();
-          if (provider.remindersHive.isEmpty) {titleController.clear();afterDaysController.clear();provider.clearForm();}
+          if (provider.remindersHive.isEmpty) {provider.clearForm();}
           await Future.delayed(const Duration(milliseconds: 500),);
         },
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           behavior: HitTestBehavior.opaque,
-          child: Stack(
-            children: [
-
-              // >>>> ===================== INPUT CARD (STICKY) ================
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 15, offset: const Offset(0, 8),),],),
-                    child: Column(
+          child: Container(
+            child: provider.remindersHive.isEmpty ?
+            Center(
+              child: Column(
+                children: const [
+                  SizedBox(height: 50),
+                  Center(child: Column(children: [Icon(Icons.notifications_none_rounded, size: 50, color: Colors.grey,), SizedBox(height: 10), Text("No reminders yet"),],),),
+                ],
+              ),
+            ):
+            ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: const EdgeInsets.all(12),
+              itemCount: provider.remindersHive.length,
+              itemBuilder: (context, index) {
+                final item = provider.remindersHive[index];
+                final bool isCompleted = DateTime.now().isAfter(item.scheduledTime);
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 6),),],),
+                  child: ListTile(
+                    dense: true,
+                    visualDensity: const VisualDensity(vertical: -3),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2,),
+                    minLeadingWidth: 10,
+                    leading: const Center(widthFactor: 1, child: Icon(Icons.alarm, color: Color(0xFF6C63FF), size: 22,),),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // >>>> TITLE INPUT ======================================
-                        PremiumInputField(controller: titleController, label: "Reminder Title", icon: Icons.title,),
-                        const SizedBox(height: 10),
-                        // >>>> TIME PICKER ======================================
-                        GestureDetector(
-                          onTap: () => pickTime(context),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(color: const Color(0xFFF1F3F6), borderRadius: BorderRadius.circular(12),),
-                            child: Text(provider.selectedTime == null ? "Select Time" : provider.selectedTime!.format(context),),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        // >>>> DROPDOWN =========================================
-                        DropdownButton<ReminderType>(
-                          value: provider.selectedType,
-                          isExpanded: true,
-                          onChanged: (value) {if (value != null) {provider.setReminderType(value);}},
-                          items: const [
-                            DropdownMenuItem(value: ReminderType.today, child: Text("Today")),
-                            DropdownMenuItem(value: ReminderType.afterDays, child: Text("After Days")),
-                            DropdownMenuItem(value: ReminderType.nextWeek, child: Text("Next Week")),
-                            DropdownMenuItem(value: ReminderType.custom, child: Text("Custom Date")),
-                          ],
-                        ),
+                        Text(item.title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14,),),
+                        const SizedBox(height: 4),
+                        Text(item.time, style: TextStyle(fontSize: 12, color: Colors.grey.shade600,),),
 
-                        // >>>> AFTER DAYS INPUT =================================
-                        if (provider.selectedType == ReminderType.afterDays)...[
-                          TextField(
-                            controller: afterDaysController,
-                            keyboardType: TextInputType.number,
-                            onChanged: (v) => provider.setAfterDays(int.tryParse(v) ?? 1),
-                            decoration: const InputDecoration(labelText: "After how many days?",),
-                          ),
-                        ],
+                        const SizedBox(height: 6),
 
-
-                        // >>>> CUSTOM DATE PICKER ===============================
-                        if (provider.selectedType == ReminderType.custom)...[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () async {
-                                  DateTime? picked = await showDatePicker(context: context, firstDate: DateTime.now(), lastDate: DateTime(2100), initialDate: provider.editingReminder?.customDate ?? provider.customDateTime ?? DateTime.now(),);
-                                  if (picked != null) {provider.setCustomDate(picked);}
-                                },
-                                child: const Text("Pick Date"),
-                              ),
-                              const SizedBox(height: 8),
-                              if (provider.selectedType == ReminderType.custom && (provider.customDateTime != null || provider.editingReminder?.customDate != null))...[
-                                Text("Selected Date: ""${provider.customDateTime!.day}/""${provider.customDateTime!.month}/""${provider.customDateTime!.year}",),
+                        if (isCompleted)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(colors: [Color(0xFF00B894), Color(0xFF00CEC9),],),
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [BoxShadow(color: const Color(0xFF00B894).withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 4),),],
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle, color: Colors.white, size: 12,),
+                                SizedBox(width: 4),
+                                Text("Completed", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.3,),),
                               ],
-                            ],
+                            ),
+                          )
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
+                            decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(30),),
+                            child: const Text("Pending", style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.w700,),),
                           ),
-                        ],
-                        const SizedBox(height: 10),
+                      ],
+                    ),
 
-                        // >>>> ADD BUTTON =======================================
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50.h,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C63FF), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
-                            onPressed: () {
-                              String? result;
-                              if (provider.editingReminder != null) {
-                                result = provider.updateReminder(title: titleController.text,);
-                              } else {
-                                result = provider.addReminder(titleController.text,);
-                              }
-                              if (result != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)),);
-                              } else {
-                                titleController.clear();
-                                afterDaysController.clear();
-                              }
-                            },
-                            child: Text(provider.editingReminder != null ? "Update Reminder" : "Add Reminder",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),),
-                          ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.edit, color: Colors.blue, size: 20,),
+                          onPressed: () {
+                            /*titleController.text = item.title;
+                                    afterDaysController.text = item.afterDays?.toString() ?? '';*/
+                            provider.startEdit(item, index);
+                            ReminderFormPopup.show(context, isEdit: true);
+                          },
                         ),
 
+                        SizedBox(width: 12),
 
-
-
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.delete, color: Colors.red, size: 20,),
+                          onPressed: () {provider.deleteReminder(index);},
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ),
-              // <<<< ===================== INPUT CARD (STICKY) ================
-
-              // >>>> ===================== LIST SECTION =======================
-              Positioned.fill(
-                child: Padding(
-                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.44, bottom: MediaQuery.of(context).viewInsets.bottom,),
-                  child:  provider.remindersHive.isEmpty ?
-                  Center(
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: const [
-                        SizedBox(height: 50),
-                        Center(child: Column(children: [Icon(Icons.notifications_none_rounded, size: 50, color: Colors.grey,), SizedBox(height: 10), Text("No reminders yet"),],),),
-                      ],
-                    ),
-                  ):
-                  Container(
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(18),topLeft: Radius.circular(18)), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 6),),],),
-                    child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                      padding: const EdgeInsets.all(12),
-                      itemCount: provider.remindersHive.length,
-                      itemBuilder: (context, index) {
-                        final item = provider.remindersHive[index];
-                        final bool isCompleted = DateTime.now().isAfter(item.scheduledTime);
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 6),),],),
-                          child: ListTile(
-                            dense: true,
-                            visualDensity: const VisualDensity(vertical: -3),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2,),
-                            minLeadingWidth: 10,
-                            leading: const Center(widthFactor: 1, child: Icon(Icons.alarm, color: Color(0xFF6C63FF), size: 22,),),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(item.title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14,),),
-                                const SizedBox(height: 4),
-                                Text(item.time, style: TextStyle(fontSize: 12, color: Colors.grey.shade600,),),
-
-                                const SizedBox(height: 6),
-
-                                if (isCompleted)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(colors: [Color(0xFF00B894), Color(0xFF00CEC9),],),
-                                      borderRadius: BorderRadius.circular(30),
-                                      boxShadow: [BoxShadow(color: const Color(0xFF00B894).withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 4),),],
-                                    ),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.check_circle, color: Colors.white, size: 12,),
-                                        SizedBox(width: 4),
-                                        Text("Completed", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.3,),),
-                                      ],
-                                    ),
-                                  )
-                                else
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4,),
-                                    decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(30),),
-                                    child: const Text("Pending", style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.w700,),),
-                                  ),
-                              ],
-                            ),
-
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  icon: const Icon(Icons.edit, color: Colors.blue, size: 20,),
-                                  onPressed: () {
-                                    titleController.text = item.title;
-                                    afterDaysController.text = item.afterDays?.toString() ?? '';
-                                    provider.startEdit(item, index);
-                                  },
-                                ),
-
-                                SizedBox(width: 12),
-
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  icon: const Icon(Icons.delete, color: Colors.red, size: 20,),
-                                  onPressed: () {provider.deleteReminder(index);},
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              // >>>> ===================== LIST SECTION =======================
-
-            ],
+                );
+              },
+            ),
           ),
         ),
       ),

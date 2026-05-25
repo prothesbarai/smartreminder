@@ -5,6 +5,7 @@ import '../core/config/config.dart';
 import '../core/widgets/exit_app_alert_dialogue.dart';
 import '../core/widgets/sr_app_bar.dart';
 import '../features/reminder_generate/screens/reminder_screen.dart';
+import '../features/reminder_generate/widgets/reminder_form_popup.dart';
 import '../features/schedule_suggest/screens/schedule_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,7 +25,18 @@ class _HomeScreenState extends State<HomeScreen> {
   SrAppBar buildAppBar() {
     switch (currentIndex) {
       case 0:
-        return const SrAppBar(appBarTitle: "Reminder", actions: [Icon(Icons.add_alert), SizedBox(width: 10),],);
+        return SrAppBar(
+          appBarTitle: "Reminder",
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add_alert),
+              onPressed: () {
+                ReminderFormPopup.show(context, isEdit: false);
+              },
+            ),
+            const SizedBox(width: 10),
+          ],
+        );
       case 1:
         return const SrAppBar(appBarTitle: "Schedule", actions: [Icon(Icons.calendar_month), SizedBox(width: 10),],);
       default:
