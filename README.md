@@ -273,5 +273,6 @@ class HiveService {
 ## Use Case Call From Any Page
 ```dart
 const BiometricSwitchTile(),
+const AutoLockSwitchTile(),
 ```
 

@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../../core/service/hive_service.dart';
 import '../pin_fallback_screen/pin_lock_screen.dart';
 import 'biometric_service.dart';
 
@@ -66,13 +67,14 @@ class _BiometricLockScreenState extends State<BiometricLockScreen> with SingleTi
   // >>> Auto Lock Logic Implements By WidgetsBindingObserver ==================
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    final autoLockEnabled = HiveService.biometricPinAutoLockBox.get('auto_lock', defaultValue: false,);
+    // >>> Nothing will happen if Auto lock is OFF
+    if (!autoLockEnabled) return;
     if (state == AppLifecycleState.paused) {
-      setState(() {
-        authenticated = false; // >>> lock app
-      });
+      setState(() {authenticated = false;});
     }
     if (state == AppLifecycleState.resumed) {
-      _authenticate(); // >>> re-check biometric
+      _authenticate();
     }
   }
   // <<< Auto Lock Logic Implements By WidgetsBindingObserver ==================

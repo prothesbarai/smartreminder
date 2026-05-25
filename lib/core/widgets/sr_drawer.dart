@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/biometric_security/widgets/biometric_auto_lock_switch_tile.dart';
 import '../../features/biometric_security/widgets/biometric_switch_tile.dart';
 
 class SrDrawer extends StatefulWidget {
@@ -24,6 +25,7 @@ class _SrDrawerState extends State<SrDrawer> {
 
           // >>> Biometric Lock Tile ===========================================
           BiometricSwitchTile(),
+          AutoLockSwitchTile(),
           Divider(),
           // <<< Biometric Lock Tile ===========================================
         ],
