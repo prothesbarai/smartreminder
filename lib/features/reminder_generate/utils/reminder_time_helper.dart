@@ -5,8 +5,7 @@ class ReminderTimeHelper {
   /// >>> BASIC TIME (today or tomorrow auto fix) ==============================
   static DateTime convertToDateTime(TimeOfDay time) {
     final now = DateTime.now();
-    DateTime scheduled = DateTime(now.year, now.month, now.day, time.hour, time.minute,);
-    if (scheduled.isBefore(now)) {scheduled = scheduled.add(const Duration(days: 1));}
+    final scheduled = DateTime(now.year, now.month, now.day, time.hour, time.minute,);
     return scheduled;
   }
   /// <<< BASIC TIME (today or tomorrow auto fix) ==============================
