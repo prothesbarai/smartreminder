@@ -19,6 +19,9 @@ class ReminderProvider extends ChangeNotifier{
 
 
   ReminderProvider() {
+    // >>> First delete the expired reminder ===================================
+    removeExpiredReminders();
+    // <<< First delete the expired reminder ===================================
     loadReminders();
   }
 
@@ -59,6 +62,9 @@ class ReminderProvider extends ChangeNotifier{
 
   // >>> LOAD REMINDERS ========================================================
   void loadReminders() {
+    // >>> First delete the expired reminder ===================================
+    removeExpiredReminders();
+    // <<< First delete the expired reminder ===================================
     remindersHive = HiveService.remainderBox.values.toList();
     notifyListeners();
   }
@@ -149,5 +155,28 @@ class ReminderProvider extends ChangeNotifier{
   }
   // <<< Common Clear Form Method ==============================================
 
+
+
+  // >>> AUTO DELETE COMPLETED REMINDERS AFTER 48 HOURS ========================
+  void removeExpiredReminders() {
+    final box = HiveService.remainderBox;
+    final now = DateTime.now();
+    final keysToDelete = [];
+    for (final item in box.values) {
+      // >>> 48 hours after reminder completion
+      final deleteAfter = item.scheduledTime.add(const Duration(hours: 48),);
+      // >>> If 48 hours have passed
+      if (now.isAfter(deleteAfter)) {
+        keysToDelete.add(item.key);
+      }
+    }
+    // >>> Delete from Hive
+    for (final key in keysToDelete) {
+      box.delete(key);
+    }
+    remindersHive = box.values.toList();
+    notifyListeners();
+  }
+  // <<< AUTO DELETE COMPLETED REMINDERS AFTER 48 HOURS ========================
 
 }
