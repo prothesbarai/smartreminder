@@ -28,7 +28,18 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
   // >>> Pick WakeU Time =======================================================
   Future<void> pickWakeUpTime() async {
     final picked = await showTimePicker(context: context, initialTime: TimeOfDay.now(),);
-    if (picked != null) {setState(() {wakeUpTime = picked;});}
+    if (picked != null) {
+      final now = TimeOfDay.now();
+      // >>> past time block (same day assumption)
+      final pickedMinutes = picked.hour * 60 + picked.minute;
+      final nowMinutes = now.hour * 60 + now.minute;
+      if (pickedMinutes < nowMinutes) {
+        if(!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past time cannot be selected.")),);
+        return;
+      }
+      setState(() => wakeUpTime = picked);
+    }
   }
   // <<< Pick WakeU Time =======================================================
 
@@ -36,7 +47,16 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
   Future<void> pickSleepTime() async {
     final picked = await showTimePicker(context: context, initialTime: TimeOfDay.now(),);
     if (picked != null) {
-      setState(() {sleepTime = picked;});
+      final now = TimeOfDay.now();
+      final pickedMinutes = picked.hour * 60 + picked.minute;
+      final nowMinutes = now.hour * 60 + now.minute;
+      if (pickedMinutes < nowMinutes) {
+        if(!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past time cannot be selected.")),);
+        return;
+      }
+
+      setState(() => sleepTime = picked);
     }
   }
   // <<<< Pick Sleep Time ======================================================
@@ -62,10 +82,17 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
             onWakeUpTap: pickWakeUpTime,
             onSleepTap: pickSleepTime,
             onGenerate: () {
-              if (wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) {
+              if (wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) return;
+              final now = TimeOfDay.now();
+              final wakeMin = wakeUpTime!.hour * 60 + wakeUpTime!.minute;
+              final sleepMin = sleepTime!.hour * 60 + sleepTime!.minute;
+              final nowMin = now.hour * 60 + now.minute;
+
+              if (wakeMin < nowMin || sleepMin < nowMin) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("You cannot make a schedule using old time.")),);
                 return;
               }
-              provider.generateSchedule(wakeUpTime: wakeUpTime!, studyHours: int.parse(studyController.text,), sleepTime: sleepTime!,);
+              provider.generateSchedule(wakeUpTime: wakeUpTime!, studyHours: int.parse(studyController.text), sleepTime: sleepTime!,);
               Navigator.pop(context);
             },
           ),
