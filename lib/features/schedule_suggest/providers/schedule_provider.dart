@@ -1,16 +1,12 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../models/schedule_model.dart';
-
+import '../services/schedule_service.dart';
 class ScheduleProvider extends ChangeNotifier{
 
   List<ScheduleModel> schedules = [];
 
-  void generateSchedule({required String wakeUpTime, required String studyHours, required String sleepTime,}) {
-    schedules = [
-      ScheduleModel(title: "Wake Up", time: wakeUpTime,),
-      ScheduleModel(title: "Study Session", time: "$studyHours Hours",),
-      ScheduleModel(title: "Sleep", time: sleepTime,),
-    ];
+  void generateSchedule({ required TimeOfDay wakeUpTime, required int studyHours, required TimeOfDay sleepTime,}) {
+    schedules = ScheduleService.generate(wakeUpTime: wakeUpTime, studyHours: studyHours, sleepTime: sleepTime,);
     notifyListeners();
   }
 

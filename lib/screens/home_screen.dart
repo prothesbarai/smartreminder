@@ -6,7 +6,8 @@ import '../core/widgets/exit_app_alert_dialogue.dart';
 import '../core/widgets/sr_app_bar.dart';
 import '../features/reminder_generate/screens/reminder_list_screen.dart';
 import '../features/reminder_generate/widgets/reminder_form_popup.dart';
-import '../features/schedule_suggest/screens/schedule_screen.dart';
+import '../features/schedule_suggest/screens/schedule_list_screen.dart';
+import '../features/schedule_suggest/widgets/schedule_form_popup.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,10 +16,11 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
 class _HomeScreenState extends State<HomeScreen> {
 
   int currentIndex = 0;
-  final screens = const [ReminderListScreen(),ScheduleScreen()];
+  final screens = const [ReminderListScreen(),ScheduleListScreen()];
   void onTabChange(int index){setState(() {currentIndex = index;});}
 
   // >>> Every Page AppBar Title and Icon ======================================
@@ -36,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return SrAppBar(
           appBarTitle: "Schedule",
           actions: [
-            IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {},),
+            IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {ScheduleFormPopup.show(context);},),
             const SizedBox(width: 10),
           ],
         );

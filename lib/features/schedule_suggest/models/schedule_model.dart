@@ -1,10 +1,9 @@
 class ScheduleModel {
-
   final String title;
-  final String time;
+  final DateTime dateTime;
 
   ScheduleModel({
     required this.title,
-    required this.time,
+    required this.dateTime,
   });
 }
