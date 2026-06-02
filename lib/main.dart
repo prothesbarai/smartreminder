@@ -63,10 +63,9 @@ class ProthesApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         theme: ThemeData(
-            useMaterial3: false,
-            appBarTheme: AppBarThemeData(backgroundColor: AppColors.secondaryColor,centerTitle: true,foregroundColor: AppColors.primaryColor,elevation: 1,iconTheme: IconThemeData(color: AppColors.primaryColor)),
-            drawerTheme: DrawerThemeData(backgroundColor: AppColors.primaryColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(20),bottomRight: Radius.circular(20)))),
-            elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: WidgetStateProperty.all(AppColors.primaryColor),))
+          useMaterial3: false,
+          appBarTheme: AppBarThemeData(backgroundColor: AppColors.secondaryColor,centerTitle: true,foregroundColor: AppColors.primaryColor,elevation: 1,iconTheme: IconThemeData(color: AppColors.primaryColor)),
+          drawerTheme: DrawerThemeData(backgroundColor: AppColors.primaryColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(20),bottomRight: Radius.circular(20)))),
         ),
         home: BiometricGuard(child: const HomeScreen(),)
       ),
