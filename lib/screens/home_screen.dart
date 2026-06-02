@@ -39,14 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return SrAppBar(
           appBarTitle: "Schedule",
           actions: [
-            IconButton(
-              icon: const Icon(Icons.card_membership),
-              onPressed: () {
-                PlanSelectorPopup.show(context);
-                setState(() {});
-              },
-            ),
-
+            IconButton(icon: const Icon(Icons.card_membership), onPressed: () async {await PlanSelectorPopup.show(context);},),
             const SizedBox(width: 10),
             IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {ScheduleFormPopup.show(context);},),
           ],
