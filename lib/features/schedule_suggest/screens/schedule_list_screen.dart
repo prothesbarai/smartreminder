@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../plan/plan_helper.dart';
-import '../plan/plan_service.dart';
-import '../plan/user_plan.dart';
+import '../../plan/plan_helper.dart';
+import '../../plan/plan_service.dart';
+import '../../plan/user_plan.dart';
 import '../providers/schedule_provider.dart';
 import '../utils/date_helper.dart';
 import '../widgets/schedule_card.dart';

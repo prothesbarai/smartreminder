@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartreminder/features/schedule_suggest/plan/plan_service.dart';
+import 'package:smartreminder/features/plan/plan_service.dart';
 
 class PlanSelectorPopup {
   static Future<String?> show(BuildContext context) async {

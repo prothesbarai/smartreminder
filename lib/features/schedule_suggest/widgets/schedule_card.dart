@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../plan/plan_service.dart';
 import '../../reminder_generate/providers/reminder_provider.dart';
 import '../models/schedule_hive_model.dart';
-import '../plan/plan_service.dart';
 import '../services/schedule_reminder_bridge.dart';
 
 class ScheduleCard extends StatelessWidget {
