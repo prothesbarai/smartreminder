@@ -32,57 +32,74 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
   }
   // <<<< Time And Date Formating Functions ====================================
 
-  // >>> Pick WakeU Time =======================================================
+  // >>> Pick WakeUp Time ======================================================
   Future<void> pickWakeUpTime() async {
+    // >>> DATE CHECK FIRST ====================================================
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please select date first"),),);
+      return;
+    }
+    // <<< DATE CHECK FIRST ====================================================
     final picked = await showTimePicker(context: context, initialTime: TimeOfDay.now(),);
     if (picked != null) {
-      final now = TimeOfDay.now();
-      // >>> past time block (same day assumption)
-      final pickedMinutes = picked.hour * 60 + picked.minute;
-      final nowMinutes = now.hour * 60 + now.minute;
-      if (pickedMinutes < nowMinutes) {
-        if(!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past time cannot be selected.")),);
-        return;
+      // >>> Only validate for today
+      if (selectedDate != null) {
+        final today = DateTime.now();
+        final isToday = selectedDate!.year == today.year && selectedDate!.month == today.month && selectedDate!.day == today.day;
+        if (isToday) {
+          final now = TimeOfDay.now();
+          final pickedMinutes = picked.hour * 60 + picked.minute;
+          final nowMinutes = now.hour * 60 + now.minute;
+          if (pickedMinutes < nowMinutes) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past time cannot be selected.",),),);
+            return;
+          }
+        }
       }
       setState(() => wakeUpTime = picked);
     }
   }
-  // <<< Pick WakeU Time =======================================================
+  // <<< Pick WakeUp Time ======================================================
 
   // >>>> Pick Sleep Time ======================================================
   Future<void> pickSleepTime() async {
+    // >>> DATE CHECK FIRST ====================================================
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please select date first"),),);
+      return;
+    }
+    // <<< DATE CHECK FIRST ====================================================
     final picked = await showTimePicker(context: context, initialTime: TimeOfDay.now(),);
     if (picked != null) {
-      final now = TimeOfDay.now();
-      final pickedMinutes = picked.hour * 60 + picked.minute;
-      final nowMinutes = now.hour * 60 + now.minute;
-      if (pickedMinutes < nowMinutes) {
-        if(!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past time cannot be selected.")),);
-        return;
+      // >>> Only validate for today
+      if (selectedDate != null) {
+        final today = DateTime.now();
+        final isToday = selectedDate!.year == today.year && selectedDate!.month == today.month && selectedDate!.day == today.day;
+        if (isToday) {
+          final now = TimeOfDay.now();
+          final pickedMinutes = picked.hour * 60 + picked.minute;
+          final nowMinutes = now.hour * 60 + now.minute;
+          if (pickedMinutes < nowMinutes) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past time cannot be selected.",),),);
+            return;
+          }
+        }
       }
-
       setState(() => sleepTime = picked);
     }
   }
   // <<<< Pick Sleep Time ======================================================
 
-
+  // >>> Picked Date ===========================================================
   Future<void> pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(), // আজকের আগে select করা যাবে না
-      lastDate: DateTime(2100),
-    );
-
+    final picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime(2100),);
     if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-      });
+      setState(() {selectedDate = picked;});
     }
   }
+  // <<< Picked Date ===========================================================
 
 
   @override
