@@ -83,11 +83,34 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (showHeader)
+                        if (showHeader)...[
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12,),
-                            child: Center(child: Text(getDateTitle(item.date), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(child: Center(child: Text(getDateTitle(item.date), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),),),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_forever, color: Colors.red,),
+                                  onPressed: () async {
+                                    final ok = await showDialog<bool>(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: const Text("Delete"),
+                                        content: Text("Delete all schedules of ${getDateTitle(item.date)} ?",),
+                                        actions: [
+                                          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel"),),
+                                          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete"),),
+                                        ],
+                                      ),
+                                    );
+                                    if (ok == true) {provider.deleteSchedulesByDate(item.date);}
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
+                        ],
                         ScheduleCard(schedule: item),
                       ],
                     );

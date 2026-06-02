@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../plan/plan_helper.dart';
+import '../../plan/plan_service.dart';
+import '../../plan/user_plan.dart';
 import '../providers/schedule_provider.dart';
 import '../widgets/schedule_input_section.dart';
 
@@ -105,6 +108,25 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
             onSleepTap: pickSleepTime,
             onGenerate: () {
               if (selectedDate == null || wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) {return;}
+
+              // >>> SAME DATE ALREADY EXISTS CHECK ============================
+              if (provider.hasScheduleForDate(selectedDate!)) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Schedule already exists for this date.",),),);
+                return;
+              }
+              // <<< SAME DATE ALREADY EXISTS CHECK ============================
+
+              // >>> DATE WISE PLAN LIMIT CHECK ================================
+              final plan = PlanService.getPlan();
+              final userPlan = plan == 'free' ? UserPlan.free : UserPlan.paid;
+              final limit = getDailyLimit(userPlan);
+              if (!PlanService.canGenerateForDate(selectedDate!, limit,)) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Limit reached for this date ($limit)",),),);
+                return;
+              }
+              // <<< DATE WISE PLAN LIMIT CHECK ================================
+
+
               final today = DateTime.now();
               final todayOnly = DateTime(today.year, today.month, today.day,);
               final selectedOnly = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day,);
@@ -133,6 +155,9 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
               }
 
               provider.generateAndSaveSchedule(selectedDate: selectedDate!, wakeUpTime: wakeUpTime!, studyHours: hours, sleepTime: sleepTime!, context: context,);
+              // >>> SAVE GENERATION COUNT =====================================
+              PlanService.increaseUsageForDate(selectedDate!,);
+              // <<< SAVE GENERATION COUNT =====================================
               Navigator.pop(context);
             },
           ),

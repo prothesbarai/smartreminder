@@ -13,7 +13,7 @@ class HiveService {
     await Future.wait([
       Hive.openBox<ReminderHiveModel>('reminder_box'),
       Hive.openBox<ScheduleHiveModel>('schedule_box'),
-      Hive.openBox("schedule_plan_settings"),
+      Hive.openBox("plan_settings"),
       Hive.openBox("biometric_and_pin_auto_lock_box"),
     ]);
 
@@ -21,7 +21,7 @@ class HiveService {
   /// >>>> Access All box ======================================================
   static Box<ReminderHiveModel> get remainderBox => Hive.box<ReminderHiveModel>('reminder_box');
   static Box<ScheduleHiveModel> get scheduleBox => Hive.box<ScheduleHiveModel>('schedule_box');
-  static Box get schedulePlanSettingsBox => Hive.box('schedule_plan_settings');
+  static Box get planSettingsBox => Hive.box('plan_settings');
   static Box get biometricPinAutoLockBox => Hive.box('biometric_and_pin_auto_lock_box');
   /// <<<< Access All box ======================================================
 }

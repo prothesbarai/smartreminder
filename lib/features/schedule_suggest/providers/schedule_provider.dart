@@ -46,7 +46,7 @@ class ScheduleProvider extends ChangeNotifier {
 
     // >>> Generate new schedule list
     final generated = ScheduleService.generate(selectedDate: selectedDate,wakeUpTime: wakeUpTime, studyHours: studyHours, sleepTime: sleepTime,);
-    
+
     // >>> SAVE NEW SCHEDULE FOR ALL
     // >>> await box.clear();
     for (var item in generated) {
@@ -75,4 +75,27 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
   // <<<<< REFRESH =============================================================
+
+
+  // >>>>>> Date Wise Remove Schedule List =====================================
+  Future<void> deleteSchedulesByDate(DateTime date) async {
+    final box = HiveService.scheduleBox;
+    final keys = box.keys.where((key) {
+      final item = box.get(key);
+      if (item == null) return false;
+      return item.date.year == date.year && item.date.month == date.month && item.date.day == date.day;
+    }).toList();
+    for (final key in keys) {
+      await box.delete(key);
+    }
+    await refresh();
+  }
+  // <<<<<< Date Wise Remove Schedule List =====================================
+
+
+  // >>> CHECK DATE ALREADY EXISTS =============================================
+  bool hasScheduleForDate(DateTime date) {
+    return schedules.any((e) => e.date.year == date.year && e.date.month == date.month && e.date.day == date.day,);
+  }
+  // <<< CHECK DATE ALREADY EXISTS =============================================
 }
