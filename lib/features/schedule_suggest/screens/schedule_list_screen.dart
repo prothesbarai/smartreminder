@@ -30,6 +30,9 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
       builder: (context, plan, _) {
         final userPlan = plan == 'free' ? UserPlan.free : UserPlan.paid;
         final limit = getDailyLimit(userPlan);
+        final today = DateTime.now();
+        final used = PlanService.getUsageForDate(today);
+        final remaining = (limit - used).clamp(0, limit);
         final isFree = plan == 'free';
         return Scaffold(
           body: Column(
@@ -49,7 +52,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                       children: [
                         Text(isFree ? "FREE PLAN" : "PREMIUM PLAN", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1,),),
                         const SizedBox(height: 6),
-                        Text("Daily Limit: $limit", style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14,),),
+                        Text("Used $used of $limit • $remaining left today", style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14,),),
                       ],
                     ),
                     // >>>> RIGHT BADGE

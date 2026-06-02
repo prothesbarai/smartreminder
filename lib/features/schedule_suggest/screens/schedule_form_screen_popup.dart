@@ -188,7 +188,7 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
 
               provider.generateAndSaveSchedule(selectedDate: selectedDate!, wakeUpTime: wakeUpTime!, studyHours: hours, sleepTime: sleepTime!, context: context,);
               // >>> SAVE GENERATION COUNT =====================================
-              PlanService.increaseUsageForDate(selectedDate!,);
+              Future.microtask(() {PlanService.increaseUsageForDate(selectedDate!);});
               // <<< SAVE GENERATION COUNT =====================================
               Navigator.pop(context);
             },

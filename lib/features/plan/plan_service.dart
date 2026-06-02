@@ -24,7 +24,10 @@ class PlanService {
 
   /// Generate usage key by selected date
   static String getDateKey(DateTime date) {
-    return "${date.year}-${date.month}-${date.day}";
+    final y = date.year;
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return "$y-$m-$d";
   }
 
   /// Returns generation count of a specific date
