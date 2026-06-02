@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/schedule_hive_model.dart';
 import '../plan/plan_service.dart';
+import '../services/schedule_reminder_bridge.dart';
 
 class ScheduleCard extends StatelessWidget {
   final ScheduleHiveModel schedule;
@@ -16,7 +17,9 @@ class ScheduleCard extends StatelessWidget {
     return "$day/$month/$year • $hour:$minute $period";
   }
 
-
+  bool isPastSchedule(DateTime dateTime) {
+    return dateTime.isBefore(DateTime.now());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +44,9 @@ class ScheduleCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(schedule.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),),
+                      Text(schedule.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isPastSchedule(schedule.dateTime) ? Colors.red : Colors.black,),),
                       const SizedBox(height: 4),
-                      Text(formatDateTime(schedule.dateTime), style: const TextStyle(fontSize: 13, color: Colors.black54,),),
+                      Text(formatDateTime(schedule.dateTime), style: TextStyle(fontSize: 13, color: isPastSchedule(schedule.dateTime) ? Colors.red : Colors.black54,),),
                     ],
                   ),
                 ),
@@ -52,13 +55,23 @@ class ScheduleCard extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: InkWell(
                       onTap: () {
-                        // premium action
+                        // >>>> BLOCK IF PAST TIME
+                        if (isPastSchedule(schedule.dateTime)) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Past schedule cannot be added to reminder"),),);
+                          return;
+                        }
+                        final error = ScheduleReminderBridge.toggleReminder(schedule);
+                        if (error != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)),);
+                        }
+                        // >>> UI refresh
+                        (context as Element).markNeedsBuild();
                       },
                       borderRadius: BorderRadius.circular(25),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                        decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.amber.shade300, Colors.orange.shade600,],), borderRadius: BorderRadius.circular(25), boxShadow: [BoxShadow(color: Colors.orange.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3),),],),
-                        child: Text("Add Remainder", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white,),),
+                        decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.amber.shade300, Colors.orange.shade600],), borderRadius: BorderRadius.circular(25),),
+                        child: Text(isPastSchedule(schedule.dateTime) ? "Expired" : (ScheduleReminderBridge.isReminderAdded(schedule) ? "Cancel Reminder" : "Add Reminder"),),
                       ),
                     ),
                   ),
