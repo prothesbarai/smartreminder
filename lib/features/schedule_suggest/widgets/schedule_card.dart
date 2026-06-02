@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../reminder_generate/providers/reminder_provider.dart';
 import '../models/schedule_hive_model.dart';
 import '../plan/plan_service.dart';
 import '../services/schedule_reminder_bridge.dart';
@@ -24,6 +26,15 @@ class ScheduleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPaid = PlanService.getPlan() == 'paid';
+
+    final bool isPast = isPastSchedule(schedule.dateTime);
+    final bool isAdded = ScheduleReminderBridge.isReminderAdded(schedule);
+
+    BoxDecoration getDecoration() {
+      if (isPast) {return BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(25),);}
+      if (isAdded) {return BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(25),);}
+      return BoxDecoration(gradient: LinearGradient(colors: [Colors.amber.shade300, Colors.orange.shade600],), borderRadius: BorderRadius.circular(25),);
+    }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -66,12 +77,13 @@ class ScheduleCard extends StatelessWidget {
                         }
                         // >>> UI refresh
                         (context as Element).markNeedsBuild();
+                        context.read<ReminderProvider>().loadReminders();
                       },
                       borderRadius: BorderRadius.circular(25),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                        decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.amber.shade300, Colors.orange.shade600],), borderRadius: BorderRadius.circular(25),),
-                        child: Text(isPastSchedule(schedule.dateTime) ? "Expired" : (ScheduleReminderBridge.isReminderAdded(schedule) ? "Cancel Reminder" : "Add Reminder"),),
+                        decoration: getDecoration(),
+                        child: Text(isPast ? "Expired" : (isAdded ? "Cancel" : "Add Reminder"), style: const TextStyle(color: Colors.white),),
                       ),
                     ),
                   ),
