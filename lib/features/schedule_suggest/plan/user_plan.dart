@@ -1,6 +1,1 @@
-enum UserPlan {
-  free,
-  paidBasic,
-  paidPro,
-  paidPremium,
-}
+enum UserPlan { free, paid, }
