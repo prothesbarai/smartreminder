@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../plan/plan_service.dart';
 import '../../reminder_generate/providers/reminder_provider.dart';
+import '../../user_account_with_plan/plan/plan_service.dart';
 import '../models/schedule_hive_model.dart';
 import '../services/schedule_reminder_bridge.dart';
 

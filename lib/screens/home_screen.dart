@@ -4,11 +4,11 @@ import 'package:smartreminder/core/widgets/sr_drawer.dart';
 import '../core/config/config.dart';
 import '../core/widgets/exit_app_alert_dialogue.dart';
 import '../core/widgets/sr_app_bar.dart';
-import '../features/plan/plan_selector_popup.dart';
 import '../features/reminder_generate/screens/reminder_list_screen.dart';
 import '../features/reminder_generate/widgets/reminder_form_popup.dart';
 import '../features/schedule_suggest/screens/schedule_list_screen.dart';
 import '../features/schedule_suggest/widgets/schedule_form_popup.dart';
+import '../features/user_account_with_plan/screen/user_account_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   int currentIndex = 0;
-  final screens = const [ReminderListScreen(),ScheduleListScreen()];
+  final screens = const [ReminderListScreen(),ScheduleListScreen(),UserAccountScreen()];
   void onTabChange(int index){setState(() {currentIndex = index;});}
 
   // >>> Every Page AppBar Title and Icon ======================================
@@ -39,9 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
         return SrAppBar(
           appBarTitle: "Schedule",
           actions: [
-            IconButton(icon: const Icon(Icons.card_membership), onPressed: () async {await PlanSelectorPopup.show(context);},),
-            const SizedBox(width: 10),
             IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {ScheduleFormPopup.show(context);},),
+          ],
+        );
+      case 2:
+        return SrAppBar(
+          appBarTitle: "My Account",
+          actions: [
+
           ],
         );
       default:
