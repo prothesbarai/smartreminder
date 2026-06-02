@@ -15,15 +15,19 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
   final studyController = TextEditingController();
   TimeOfDay? wakeUpTime;
   TimeOfDay? sleepTime;
+  DateTime? selectedDate;
 
-  // >>>> Time Formating Functions =============================================
+  // >>>> Time And Date Formating Functions ====================================
   String formatTime(TimeOfDay time) {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.period == DayPeriod.am ? 'AM' : 'PM';
     return '$hour:$minute $period';
   }
-  // <<<< Time Formating Functions =============================================
+  String formatDate(DateTime date) {
+    return "${date.day}/${date.month}/${date.year}";
+  }
+  // <<<< Time And Date Formating Functions ====================================
 
   // >>> Pick WakeU Time =======================================================
   Future<void> pickWakeUpTime() async {
@@ -62,6 +66,22 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
   // <<<< Pick Sleep Time ======================================================
 
 
+  Future<void> pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(), // আজকের আগে select করা যাবে না
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+
   @override
   void dispose() {
     studyController.dispose();
@@ -76,23 +96,43 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ScheduleInputSection(
+            selectedDateText: selectedDate == null ? '' : formatDate(selectedDate!),
             wakeUpText: wakeUpTime == null ? '' : formatTime(wakeUpTime!),
             sleepText: sleepTime == null ? '' : formatTime(sleepTime!),
             studyController: studyController,
+            onDateTap: pickDate,
             onWakeUpTap: pickWakeUpTime,
             onSleepTap: pickSleepTime,
             onGenerate: () {
-              if (wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) return;
-              final now = TimeOfDay.now();
-              final wakeMin = wakeUpTime!.hour * 60 + wakeUpTime!.minute;
-              final sleepMin = sleepTime!.hour * 60 + sleepTime!.minute;
-              final nowMin = now.hour * 60 + now.minute;
+              if (selectedDate == null || wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) {return;}
+              final today = DateTime.now();
+              final todayOnly = DateTime(today.year, today.month, today.day,);
+              final selectedOnly = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day,);
 
-              if (wakeMin < nowMin || sleepMin < nowMin) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("You cannot make a schedule using old time.")),);
+              // >>> Old date block
+              if (selectedOnly.isBefore(todayOnly)) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Old date schedule cannot be created."),),);
                 return;
               }
-              provider.generateSchedule(wakeUpTime: wakeUpTime!, studyHours: int.parse(studyController.text), sleepTime: sleepTime!,);
+
+              // >>> If today date is past wake-up time block
+              if (selectedOnly == todayOnly) {
+                final now = TimeOfDay.now();
+                final wakeMinutes = wakeUpTime!.hour * 60 + wakeUpTime!.minute;
+                final nowMinutes = now.hour * 60 + now.minute;
+                if (wakeMinutes < nowMinutes) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("For today's schedule, wake up time cannot be in the past.",),),);
+                  return;
+                }
+              }
+              final hours = int.tryParse(studyController.text) ?? 0;
+
+              if (hours <= 0) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter valid study hours."),),);
+                return;
+              }
+
+              provider.generateAndSaveSchedule(selectedDate: selectedDate!, wakeUpTime: wakeUpTime!, studyHours: hours, sleepTime: sleepTime!, context: context,);
               Navigator.pop(context);
             },
           ),

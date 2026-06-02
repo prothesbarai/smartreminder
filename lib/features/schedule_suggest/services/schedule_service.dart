@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import '../models/schedule_model.dart';
+import 'package:uuid/uuid.dart';
+import '../models/schedule_hive_model.dart';
 
 class ScheduleService {
 
-  static List<ScheduleModel> generate({required TimeOfDay wakeUpTime, required int studyHours, required TimeOfDay sleepTime,}) {
-    final List<ScheduleModel> schedules = [];
+  static List<ScheduleHiveModel> generate({required DateTime selectedDate, required TimeOfDay wakeUpTime, required int studyHours, required TimeOfDay sleepTime,}) {
+    final List<ScheduleHiveModel> schedules = [];
+    final uuid = Uuid();
+    DateTime wake = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, wakeUpTime.hour, wakeUpTime.minute,);
+    DateTime sleep = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, sleepTime.hour, sleepTime.minute,);
+    if (sleep.isBefore(wake)) {sleep = sleep.add(const Duration(days: 1));}
 
-    DateTime current = DateTime(2025, 1, 1, wakeUpTime.hour,wakeUpTime.minute,);
-    schedules.add(ScheduleModel(title: "Wake Up", dateTime: current,),);
-    current = current.add(const Duration(minutes: 30),);
-    schedules.add(ScheduleModel(title: "Breakfast", dateTime: current,),);
-    current = current.add(const Duration(minutes: 30),);
+    DateTime current = wake;
+    schedules.add(ScheduleHiveModel(id: uuid.v4(), title: "Wake Up", dateTime: current, date: selectedDate,));
+
+    current = current.add(const Duration(minutes: 30));
 
     for (int i = 1; i <= studyHours; i++) {
-      schedules.add(ScheduleModel(title: "Study Session $i", dateTime: current,),);
-      current = current.add(const Duration(hours: 1),);
-      schedules.add(ScheduleModel(title: "Break", dateTime: current,),);
-      current = current.add(const Duration(minutes: 15),);
+      if (current.add(const Duration(hours: 1)).isAfter(sleep)) break;
+      schedules.add(ScheduleHiveModel(id: uuid.v4(), title: "Study $i", dateTime: current, date: selectedDate,));
+      current = current.add(const Duration(hours: 1));
     }
-    final sleepDateTime = DateTime(2025, 1, 1, sleepTime.hour, sleepTime.minute,);
-    schedules.add(ScheduleModel(title: "Sleep", dateTime: sleepDateTime,),);
+    schedules.add(ScheduleHiveModel(id: uuid.v4(), title: "Sleep", dateTime: sleep, date: selectedDate,));
     return schedules;
   }
-
 }

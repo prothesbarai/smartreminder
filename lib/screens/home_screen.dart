@@ -6,6 +6,7 @@ import '../core/widgets/exit_app_alert_dialogue.dart';
 import '../core/widgets/sr_app_bar.dart';
 import '../features/reminder_generate/screens/reminder_list_screen.dart';
 import '../features/reminder_generate/widgets/reminder_form_popup.dart';
+import '../features/schedule_suggest/plan/plan_selector_popup.dart';
 import '../features/schedule_suggest/screens/schedule_list_screen.dart';
 import '../features/schedule_suggest/widgets/schedule_form_popup.dart';
 
@@ -38,8 +39,16 @@ class _HomeScreenState extends State<HomeScreen> {
         return SrAppBar(
           appBarTitle: "Schedule",
           actions: [
-            IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {ScheduleFormPopup.show(context);},),
+            IconButton(
+              icon: const Icon(Icons.card_membership),
+              onPressed: () {
+                PlanSelectorPopup.show(context);
+                setState(() {});
+              },
+            ),
+
             const SizedBox(width: 10),
+            IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {ScheduleFormPopup.show(context);},),
           ],
         );
       default:
