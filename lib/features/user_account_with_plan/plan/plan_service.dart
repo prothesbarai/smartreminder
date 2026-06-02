@@ -62,11 +62,11 @@ class PlanService {
       if (user.balance >= paidPlanCost) {
         user.balance -= paidPlanCost;
         user.plan = 'paid';
+        user.paidStartDate = DateTime.now();
         user.save();
         setPlan('paid');
         return true;
       } else {
-        // not enough balance
         return false;
       }
     }
@@ -78,4 +78,32 @@ class PlanService {
   }
   // <<< Handles plan switching between FREE and PAID states ===================
 
+
+  // >>> Add subscription logic  ===============================================
+  static const int subscriptionDays = 30;
+  // >>> check expired
+  static bool isSubscriptionExpired(DateTime startDate) {
+    final expiryDate = startDate.add(const Duration(days: subscriptionDays));
+    return DateTime.now().isAfter(expiryDate);
+  }
+  // >>> Remaining days
+  static int getRemainingDays(DateTime startDate) {
+    final expiryDate = startDate.add(const Duration(days: subscriptionDays));
+    return expiryDate.difference(DateTime.now()).inDays;
+  }
+  // >>> Auto validate
+  static void validateSubscription() {
+    final userBox = HiveService.userAccountBox;
+    final user = userBox.get("main_user");
+    if (user == null) return;
+    if (user.plan == 'paid' && user.paidStartDate != null) {
+      if (isSubscriptionExpired(user.paidStartDate!)) {
+        user.plan = 'free';
+        user.paidStartDate = null;
+        user.save();
+        setPlan('free');
+      }
+    }
+  }
+  // <<< Add subscription logic  ===============================================
 }

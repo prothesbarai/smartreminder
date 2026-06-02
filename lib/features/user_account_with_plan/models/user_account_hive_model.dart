@@ -13,9 +13,13 @@ class UserAccountHiveModel extends HiveObject {
   @HiveField(2)
   String plan;
 
+  @HiveField(3)
+  DateTime? paidStartDate;
+
   UserAccountHiveModel({
     required this.userId,
     required this.balance,
     required this.plan,
+    this.paidStartDate,
   });
 }
