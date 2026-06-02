@@ -125,16 +125,23 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
             onSleepTap: pickSleepTime,
             onGenerate: () {
               if (selectedDate == null || wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) {return;}
+              final plan = PlanService.getPlan();
 
-              // >>> SAME DATE ALREADY EXISTS CHECK ============================
-              if (provider.hasScheduleForDate(selectedDate!)) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Schedule already exists for this date.",),),);
-                return;
+              // >>> FREE PLAN DATE RESTRICTION ================================
+              final isFree = plan == 'free';
+              if (isFree) {
+                final today = DateTime.now();
+                final todayOnly = DateTime(today.year, today.month, today.day);
+                final selectedOnly = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day,);
+                if (selectedOnly != todayOnly) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Free plan allows only today's schedule. Upgrade to select other dates.",),),);
+                  return;
+                }
               }
-              // <<< SAME DATE ALREADY EXISTS CHECK ============================
+              // <<< FREE PLAN DATE RESTRICTION ================================
+
 
               // >>> DATE WISE PLAN LIMIT CHECK ================================
-              final plan = PlanService.getPlan();
               final userPlan = plan == 'free' ? UserPlan.free : UserPlan.paid;
               final limit = getDailyLimit(userPlan);
               if (!PlanService.canGenerateForDate(selectedDate!, limit,)) {
@@ -142,6 +149,14 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
                 return;
               }
               // <<< DATE WISE PLAN LIMIT CHECK ================================
+
+
+              // >>> SAME DATE ALREADY EXISTS CHECK ============================
+              if (provider.hasScheduleForDate(selectedDate!)) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Schedule already exists for this date.",),),);
+                return;
+              }
+              // <<< SAME DATE ALREADY EXISTS CHECK ============================
 
 
               final today = DateTime.now();
