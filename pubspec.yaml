@@ -49,6 +49,8 @@ dependencies:
   pinput: ^6.0.2
   flutter_animate: ^4.5.2
   flutter_launcher_icons: ^0.14.4
+  # For Ads
+  google_mobile_ads: ^7.0.0
 
 dev_dependencies:
   flutter_test:

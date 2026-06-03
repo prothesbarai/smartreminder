@@ -1,3 +1,308 @@
+# Google Mobile Ads Integration Guide
+
+This project uses the `google_mobile_ads` package to display:
+
+- Banner Ads
+- Interstitial Ads
+- Rewarded Ads
+
+---
+
+# Initialization
+
+Before using any ad format, initialize the Mobile Ads SDK.
+
+## main.dart
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Google Mobile Ads SDK
+  await AdsService.initialize();
+
+  // Preload Interstitial Ad
+  await InterstitialHelper.load();
+
+  // Preload Rewarded Ad
+  await RewardsAdsModule.loadRewardedAd();
+
+  runApp(const MyApp());
+}
+```
+
+---
+
+# Android Configuration
+
+Add the following inside:
+
+`android/app/src/main/AndroidManifest.xml`
+
+```xml
+<application>
+
+    <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="YOUR_ADMOB_APP_ID"/>
+
+</application>
+```
+
+Replace:
+
+```text
+YOUR_ADMOB_APP_ID
+```
+
+with your actual AdMob App ID.
+
+---
+
+# Banner Ads
+
+Banner ads are displayed using the reusable widget:
+
+```dart
+BannerAdWidget()
+```
+
+## Example
+
+```dart
+Scaffold(
+  body: Column(
+    children: [
+      Expanded(
+        child: HomePage(),
+      ),
+
+      const BannerAdWidget(),
+    ],
+  ),
+);
+```
+
+## Recommended Usage
+
+- Home Page
+- Product Listing Page
+- Settings Page
+- Bottom Section of Long Screens
+
+Avoid placing banner ads where they obstruct user interaction.
+
+---
+
+# Interstitial Ads
+
+Interstitial ads should be shown during natural transition points.
+
+Examples:
+
+- After completing an action
+- Before opening another screen
+- After finishing a task
+
+---
+
+## Check Ad Availability
+
+```dart
+if (InterstitialHelper.isReady) {
+  InterstitialHelper.show();
+}
+```
+
+---
+
+## Example Navigation
+
+```dart
+onPressed: () {
+
+  if (InterstitialHelper.isReady) {
+    InterstitialHelper.show();
+  }
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const NextPage(),
+    ),
+  );
+}
+```
+
+---
+
+## Recommended Usage
+
+Show occasionally:
+
+- Screen transitions
+- Action completion
+- Game level completion
+
+Do NOT show repeatedly or immediately on app launch.
+
+---
+
+# Rewarded Ads
+
+Rewarded Ads should only be displayed after explicit user interaction.
+
+Examples:
+
+- Watch ad and earn coins
+- Watch ad and unlock premium content
+- Watch ad and receive bonus points
+
+---
+
+## Check Ad Availability
+
+```dart
+if (RewardsAdsModule.isReady) {
+  // Show rewarded ad
+}
+```
+
+---
+
+## Example
+
+```dart
+ElevatedButton(
+  onPressed: () async {
+
+    if (RewardsAdsModule.isReady) {
+
+      await RewardsAdsModule.showRewardedAd(
+        rewardAmount: 10,
+        onRewardEarned: (reward) {
+
+          debugPrint(
+            "User earned reward: $reward",
+          );
+
+        },
+      );
+
+    }
+
+  },
+  child: const Text(
+    'Watch Ad',
+  ),
+)
+```
+
+---
+
+## Reward Callback
+
+```dart
+onRewardEarned: (reward) {
+
+  // Add coins
+  // Unlock feature
+  // Give points
+
+}
+```
+
+The callback is triggered only when the reward is successfully earned.
+
+---
+
+# Ad Lifecycle
+
+Interstitial Ads:
+
+```dart
+await InterstitialHelper.load();
+```
+
+Loads once during app startup.
+
+After an ad is closed, the next ad is automatically preloaded.
+
+---
+
+Rewarded Ads:
+
+```dart
+await RewardsAdsModule.loadRewardedAd();
+```
+
+Loads once during app startup.
+
+After an ad is completed or dismissed, the next ad is automatically preloaded.
+
+---
+
+# Test Ad Unit IDs
+
+## Banner
+
+```text
+ca-app-pub-3940256099942544/6300978111
+```
+
+## Interstitial
+
+```text
+ca-app-pub-3940256099942544/1033173712
+```
+
+## Rewarded
+
+```text
+ca-app-pub-3940256099942544/5224354917
+```
+
+## App ID
+
+```text
+ca-app-pub-3940256099942544~3347511713
+```
+
+---
+
+# Production Release Checklist
+
+Before publishing:
+
+- Replace Test App ID
+- Replace Banner Ad Unit ID
+- Replace Interstitial Ad Unit ID
+- Replace Rewarded Ad Unit ID
+- Test on a physical device
+- Verify AdMob account approval
+- Ensure Play Store policy compliance
+
+---
+
+# Play Store Policy Notes
+
+Allowed:
+
+- Banner Ads
+- Interstitial Ads during natural transitions
+- Rewarded Ads after user interaction
+
+Not Allowed:
+
+- Auto-show Rewarded Ads
+- Excessive Interstitial Ads
+- Ads blocking app functionality
+- Ads immediately after app launch
+
+Following these guidelines helps maintain compliance with Google Play and AdMob policies.
+
+
+
 ---
 ---
 ---

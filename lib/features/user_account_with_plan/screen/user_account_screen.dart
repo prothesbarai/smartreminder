@@ -90,11 +90,15 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Container(
+                          height: 36,
+                          padding: EdgeInsets.zero,
                           decoration: BoxDecoration(gradient: AppGradients.gold, borderRadius: BorderRadius.circular(14),),
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.pop(context);
+                              // >>> Custom or Direct Add Coin =================
                               UserAccountService.addBalance(plan.price);
+                              // <<< Custom or Direct Add Coin =================
                               setState(() {});
                             },
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
@@ -308,7 +312,12 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   subtitle: Text("${user.balance} Coins"),
                   trailing: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6A5AE0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
-                    onPressed: () {UserAccountService.addBalance(10);setState(() {});},
+                    onPressed: () {
+                      // >>> Custom or Direct Add Coin =========================
+                      UserAccountService.addBalance(10);
+                      // <<< Custom or Direct Add Coin =========================
+                      setState(() {});
+                    },
                     child: const Text("+ Add"),
                   ),
                 ),
