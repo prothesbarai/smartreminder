@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../user_account_with_plan/plan/plan_helper.dart';
 import '../../user_account_with_plan/plan/plan_service.dart';
 import '../../user_account_with_plan/plan/user_plan.dart';
+import '../../user_account_with_plan/service/user_account_service.dart';
 import '../providers/schedule_provider.dart';
 import '../widgets/schedule_input_section.dart';
 
@@ -125,10 +126,13 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
             onSleepTap: pickSleepTime,
             onGenerate: () {
               if (selectedDate == null || wakeUpTime == null || sleepTime == null || studyController.text.isEmpty) {return;}
-              final plan = PlanService.getPlan();
+
+              final user = UserAccountService.getAccount();
+              final isActive = user.activePlanId != null && PlanService.isPlanActive(user, user.activePlanId!);
+
 
               // >>> FREE PLAN DATE RESTRICTION ================================
-              final isFree = plan == 'free';
+              final isFree = !isActive;
               if (isFree) {
                 final today = DateTime.now();
                 final todayOnly = DateTime(today.year, today.month, today.day);
@@ -142,8 +146,7 @@ class _ScheduleFormScreenPopupState extends State<ScheduleFormScreenPopup> {
 
 
               // >>> DATE WISE PLAN LIMIT CHECK ================================
-              final userPlan = plan == 'free' ? UserPlan.free : UserPlan.paid;
-              final limit = getDailyLimit(userPlan);
+              final limit = user.activePlanId == null ? getDailyLimit(UserPlan.free) : getDailyLimit(UserPlan.paid);
               if (!PlanService.canGenerateForDate(selectedDate!, limit,)) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Limit reached for this date ($limit)",),),);
                 return;
