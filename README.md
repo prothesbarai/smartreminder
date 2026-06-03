@@ -1,4 +1,10 @@
-# Google Mobile Ads Integration Guide
+---
+---
+---
+---
+---
+---
+#  📢📱💰 Google Mobile Ads Integration Guide
 
 This project uses the `google_mobile_ads` package to display:
 
@@ -59,7 +65,7 @@ with your actual AdMob App ID.
 
 ---
 
-# Banner Ads
+# 🏷️ Banner Ads
 
 Banner ads are displayed using the reusable widget:
 
@@ -94,7 +100,7 @@ Avoid placing banner ads where they obstruct user interaction.
 
 ---
 
-# Interstitial Ads
+# 🎬 Interstitial Ads
 
 Interstitial ads should be shown during natural transition points.
 
@@ -148,7 +154,7 @@ Do NOT show repeatedly or immediately on app launch.
 
 ---
 
-# Rewarded Ads
+# 🎁 Rewarded Ads
 
 Rewarded Ads should only be displayed after explicit user interaction.
 
@@ -216,7 +222,7 @@ The callback is triggered only when the reward is successfully earned.
 
 ---
 
-# Ad Lifecycle
+# 🔄 Ad Lifecycle
 
 Interstitial Ads:
 
@@ -242,7 +248,7 @@ After an ad is completed or dismissed, the next ad is automatically preloaded.
 
 ---
 
-# Test Ad Unit IDs
+# 🧪 Test Ad Unit IDs
 
 ## Banner
 
@@ -270,7 +276,7 @@ ca-app-pub-3940256099942544~3347511713
 
 ---
 
-# Production Release Checklist
+# ✅ Production Release Checklist
 
 Before publishing:
 
@@ -284,7 +290,7 @@ Before publishing:
 
 ---
 
-# Play Store Policy Notes
+# 📋 Play Store Policy Notes
 
 Allowed:
 
