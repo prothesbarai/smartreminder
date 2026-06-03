@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../plan/plan_service.dart';
+import '../plan/subscription_plans.dart';
 import '../service/user_account_service.dart';
 
 class UserAccountScreen extends StatefulWidget {
@@ -30,10 +31,41 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
     );
   }
 
+  void _showPlanSelector() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return ListView(
+          children: SubscriptionPlans.all.map((plan) {
+            return ListTile(
+              title: Text(plan.name),
+              subtitle: Text("${plan.days} days - ${plan.price} coins"),
+              trailing: ElevatedButton(
+                child: const Text("Buy"),
+                onPressed: () {
+                  final success = PlanService.buyPlan(plan: plan);
+
+                  Navigator.pop(context);
+
+                  if (!success) {
+                    _showNoBalanceDialog();
+                  }
+
+                  setState(() {});
+                },
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = UserAccountService.getAccount();
-    final isPaidActive = user.plan == 'paid' && user.paidStartDate != null && !PlanService.isSubscriptionExpired(user.paidStartDate!);
+    final activePlanId = user.activePlanId;
+    final isPlanActive = activePlanId != null && PlanService.isPlanActive(user, activePlanId);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
@@ -89,27 +121,22 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
               /// >>>> PLAN CARD ===============================================
               _glassCard(
                 child: ListTile(
-                  leading: Icon(Icons.workspace_premium, color: user.plan == 'paid' ? Colors.amber : Colors.grey,),
+                  leading: Icon(Icons.workspace_premium, color: activePlanId != null ? Colors.amber : Colors.grey,),
                   title: const Text("Current Plan", style: TextStyle(fontWeight: FontWeight.w600)),
                   subtitle: Row(
                     children: [
-                      Text(user.plan.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold, color: user.plan == 'paid' ? Colors.green : Colors.black54,),),
-                      const SizedBox(width: 8),
-                      if (isPaidActive)
+                      Expanded(child: Text(activePlanId?.toUpperCase() ?? "FREE", overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isPlanActive ? Colors.green : Colors.black54,),),),
+                      if (isPlanActive)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2,),
                           decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20),),
-                          child: const Text("ACTIVE", style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold,),),
+                          child: const Text("ACTIVE", style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold,),),
                         ),
                     ],
                   ),
                   trailing: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: isPaidActive ? Colors.grey : const Color(0xFF6A5AE0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
-                    onPressed: isPaidActive ? null : () {
-                      final success = PlanService.trySwitchPlan(paidPlanCost: paidPlanCost,);
-                      if (!success) _showNoBalanceDialog();
-                      setState(() {});
-                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: isPlanActive ? Colors.grey : const Color(0xFF6A5AE0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
+                    onPressed: isPlanActive ? null : _showPlanSelector,
                     child: const Text("Upgrade"),
                   ),
                 ),
@@ -118,12 +145,12 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
 
               const SizedBox(height: 16),
 
-              if (user.plan == 'paid' && user.paidStartDate != null)...[
+              if (activePlanId != null && user.subscriptionStartDate != null && user.subscriptionDays != null)...[
                 _glassCard(
                   child: ListTile(
                     leading: const Icon(Icons.timelapse, color: Colors.orange),
                     title: const Text("Subscription"),
-                    subtitle: Text("Remaining Days: ${PlanService.getRemainingDays(user.paidStartDate!)}",),
+                    subtitle: Text("Remaining Days: ${PlanService.getRemainingDays(user.subscriptionStartDate!, user.subscriptionDays!,)}",),
                   ),
                 ),
               ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../reminder_generate/providers/reminder_provider.dart';
 import '../../user_account_with_plan/plan/plan_service.dart';
+import '../../user_account_with_plan/service/user_account_service.dart';
 import '../models/schedule_hive_model.dart';
 import '../services/schedule_reminder_bridge.dart';
 
@@ -25,7 +26,10 @@ class ScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPaid = PlanService.getPlan() == 'paid';
+
+    final user = UserAccountService.getAccount();
+    final activePlanId = user.activePlanId;
+    final isActivePlan = activePlanId != null && PlanService.isPlanActive(user, activePlanId);
 
     final bool isPast = isPastSchedule(schedule.dateTime);
     final bool isAdded = ScheduleReminderBridge.isReminderAdded(schedule);
@@ -61,7 +65,7 @@ class ScheduleCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isPaid) ...[
+                if (isActivePlan) ...[
                   Align(
                     alignment: Alignment.centerRight,
                     child: InkWell(
@@ -99,7 +103,7 @@ class ScheduleCard extends StatelessWidget {
               borderRadius: BorderRadius.only(topLeft: Radius.circular(5),),
               child: CustomPaint(
                 size: Size(35, 35),
-                painter: _TriangleBadgePainter(color: isPaid ? Colors.orange : Colors.grey,txt: isPaid ? "PAID" : "FREE", icon: isPaid ? Icons.workspace_premium : Icons.money_off,),
+                painter: _TriangleBadgePainter(color: isActivePlan ? Colors.orange : Colors.grey,txt: isActivePlan ? "PAID" : "FREE", icon: isActivePlan ? Icons.workspace_premium : Icons.money_off,),
               ),
             ),
           ),

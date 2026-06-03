@@ -19,23 +19,26 @@ class UserAccountHiveModelAdapter extends TypeAdapter<UserAccountHiveModel> {
     return UserAccountHiveModel(
       userId: fields[0] as String,
       balance: fields[1] as double,
-      plan: fields[2] as String,
-      paidStartDate: fields[3] as DateTime?,
+      activePlanId: fields[2] as String?,
+      subscriptionStartDate: fields[3] as DateTime?,
+      subscriptionDays: fields[4] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserAccountHiveModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
       ..write(obj.balance)
       ..writeByte(2)
-      ..write(obj.plan)
+      ..write(obj.activePlanId)
       ..writeByte(3)
-      ..write(obj.paidStartDate);
+      ..write(obj.subscriptionStartDate)
+      ..writeByte(4)
+      ..write(obj.subscriptionDays);
   }
 
   @override

@@ -6,37 +6,56 @@ class UserAccountService {
   static final box = HiveService.userAccountBox;
   static const String key = "main_user";
 
+  /// >>> Get or create user
   static UserAccountHiveModel getAccount() {
     final data = box.get(key);
+
     if (data == null) {
-      final newUser = UserAccountHiveModel(userId: DateTime.now().millisecondsSinceEpoch.toString(), balance: 0.0, plan: 'free',);
+      final newUser = UserAccountHiveModel(
+        userId: DateTime.now().millisecondsSinceEpoch.toString(),
+        balance: 0.0,
+        activePlanId: null,
+        subscriptionStartDate: null,
+        subscriptionDays: null,
+      );
+
       box.put(key, newUser);
       return newUser;
     }
+
     return data;
   }
 
+  /// >>> Save user
   static void update(UserAccountHiveModel user) {
     box.put(key, user);
   }
 
+  /// >>> Add balance
   static void addBalance(double amount) {
     final user = getAccount();
     user.balance += amount;
     user.save();
   }
 
+  /// >>> Deduct balance
   static bool deductBalance(double amount) {
     final user = getAccount();
     if (user.balance < amount) return false;
+
     user.balance -= amount;
     user.save();
     return true;
   }
 
-  static void updatePlan(String plan) {
+  /// >>> Clear subscription (optional helper)
+  static void clearSubscription() {
     final user = getAccount();
-    user.plan = plan;
+
+    user.activePlanId = null;
+    user.subscriptionStartDate = null;
+    user.subscriptionDays = null;
+
     user.save();
   }
 }

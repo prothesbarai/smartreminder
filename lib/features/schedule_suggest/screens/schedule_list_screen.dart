@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../user_account_with_plan/plan/plan_helper.dart';
 import '../../user_account_with_plan/plan/plan_service.dart';
 import '../../user_account_with_plan/plan/user_plan.dart';
+import '../../user_account_with_plan/service/user_account_service.dart';
 import '../providers/schedule_provider.dart';
 import '../utils/date_helper.dart';
 import '../widgets/schedule_card.dart';
@@ -28,12 +29,13 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
     return ValueListenableBuilder(
       valueListenable: PlanService.planNotifier,
       builder: (context, plan, _) {
-        final userPlan = plan == 'free' ? UserPlan.free : UserPlan.paid;
-        final limit = getDailyLimit(userPlan);
+        final user = UserAccountService.getAccount();
+        final isActive = user.activePlanId != null && PlanService.isPlanActive(user, user.activePlanId!);
+        final limit = user.activePlanId == null ? getDailyLimit(UserPlan.free) : getDailyLimit(UserPlan.paid);
         final today = DateTime.now();
         final used = PlanService.getUsageForDate(today);
         final remaining = (limit - used).clamp(0, limit);
-        final isFree = plan == 'free';
+        final isFree = !isActive;
         return Scaffold(
           body: Column(
             children: [
