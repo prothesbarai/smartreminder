@@ -63,6 +63,12 @@ void dispose() {
     _navigated = true;
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const BiometricGuard(child: HomeScreen(),),),);
   }
+
+@override
+void dispose() {
+  AdsManager.stateNotifier.removeListener(_onAdsStateChanged); // avoid memory leak
+  super.dispose();
+}
   // <<< When Ads Ready Then Navigate Home =====================================
 ```
 এতে:

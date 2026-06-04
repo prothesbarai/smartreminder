@@ -29,7 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
   SrAppBar buildAppBar() {
     switch (currentIndex) {
       case 0:
-        return SrAppBar(appBarTitle: "Ads Test",);
+        return SrAppBar(
+          appBarTitle: "Ads Test",
+          actions: [
+
+          ],
+        );
       case 1:
         return SrAppBar(
           appBarTitle: "Reminder",

@@ -36,6 +36,12 @@ class _SplashScreenState extends State<SplashScreen> {
     _navigated = true;
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const BiometricGuard(child: HomeScreen(),),),);
   }
+
+  @override
+  void dispose() {
+    AdsManager.stateNotifier.removeListener(_onAdsStateChanged);
+    super.dispose();
+  }
   // <<< When Ads Ready Then Navigate Home =====================================
 
   @override
