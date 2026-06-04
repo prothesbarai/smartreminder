@@ -5,9 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:smartreminder/screens/home_screen.dart';
 import 'core/service/hive_service.dart';
 import 'core/utils/app_colors.dart';
-import 'features/ads/ads_service.dart';
-import 'features/ads/interstitial_helper.dart';
-import 'features/ads/rewards_ads_module.dart';
+import 'features/ads/ads_manager.dart';
 import 'features/biometric_security/biometric_guard.dart';
 import 'features/reminder_generate/providers/reminder_provider.dart';
 import 'features/reminder_generate/services/notification_service.dart';
@@ -40,12 +38,7 @@ void main() async {
 
 
   // >>> For Ads Purpose =======================================================
-  // >>> Google Mobile Ads SDK initialize
-  await AdsService.initialize();
-  // >>> Interstitial preload
-  await InterstitialHelper.load();
-  // >>> Rewarded preload
-  await RewardsAdsModule.loadRewardedAd();
+  await AdsManager.initialize();
   // <<< For Ads Purpose =======================================================
 
   runApp(

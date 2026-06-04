@@ -4,33 +4,32 @@
 ---
 ---
 ---
-#  📢📱💰 Google Mobile Ads Integration Guide
 
-This project uses the `google_mobile_ads` package to display:
+# 📢 Google Mobile Ads Integration Guide (Production Ready)
+# 📢 Google Mobile Ads ইন্টিগ্রেশন গাইড (Production Ready)
 
-- Banner Ads
-- Interstitial Ads
-- Rewarded Ads
+## Supported Ads / সাপোর্টেড Ads
+
+✅ Banner Ads  
+✅ Interstitial Ads  
+✅ Rewarded Ads
+
+❌ Native Ads (Removed / ব্যবহার করা হচ্ছে না)
 
 ---
 
-# Initialization
+# English Guide
 
-Before using any ad format, initialize the Mobile Ads SDK.
-
-## main.dart
+## 1. Initialization
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Google Mobile Ads SDK
   await AdsService.initialize();
 
-  // Preload Interstitial Ad
   await InterstitialHelper.load();
 
-  // Preload Rewarded Ad
   await RewardsAdsModule.loadRewardedAd();
 
   runApp(const MyApp());
@@ -39,80 +38,67 @@ void main() async {
 
 ---
 
-# Android Configuration
+## 2. Android Configuration
 
-Add the following inside:
-
-`android/app/src/main/AndroidManifest.xml`
-
-```xml
-<application>
-
-    <meta-data
-        android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="YOUR_ADMOB_APP_ID"/>
-
-</application>
-```
-
-Replace:
+File:
 
 ```text
-YOUR_ADMOB_APP_ID
+android/app/src/main/AndroidManifest.xml
 ```
 
-with your actual AdMob App ID.
+Inside `<application>`:
+
+```xml
+<meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="YOUR_ADMOB_APP_ID"/>
+```
+
+Replace with your production AdMob App ID.
 
 ---
 
-# 🏷️ Banner Ads
+## 3. Banner Ads
 
-Banner ads are displayed using the reusable widget:
-
-```dart
-BannerAdWidget()
-```
-
-## Example
+Widget:
 
 ```dart
-Scaffold(
-  body: Column(
-    children: [
-      Expanded(
-        child: HomePage(),
-      ),
-
-      const BannerAdWidget(),
-    ],
-  ),
-);
+const BannerAdWidget()
 ```
 
-## Recommended Usage
+Example:
 
-- Home Page
-- Product Listing Page
+```dart
+Column(
+  children: [
+    Expanded(child: HomePage()),
+    const BannerAdWidget(),
+  ],
+)
+```
+
+Recommended:
+
+- Home Screen
+- Product List
 - Settings Page
-- Bottom Section of Long Screens
+- Long Scroll Screens
 
-Avoid placing banner ads where they obstruct user interaction.
+Avoid blocking buttons or content.
 
 ---
 
-# 🎬 Interstitial Ads
+## 4. Interstitial Ads
 
-Interstitial ads should be shown during natural transition points.
+Show only during natural transitions.
 
 Examples:
 
-- After completing an action
-- Before opening another screen
-- After finishing a task
+- Screen change
+- Action completed
+- Game level finished
 
----
-
-## Check Ad Availability
+Check:
 
 ```dart
 if (InterstitialHelper.isReady) {
@@ -120,155 +106,96 @@ if (InterstitialHelper.isReady) {
 }
 ```
 
----
-
-## Example Navigation
+Example:
 
 ```dart
-onPressed: () {
+if (InterstitialHelper.isReady) {
+  InterstitialHelper.show();
+}
 
-  if (InterstitialHelper.isReady) {
-    InterstitialHelper.show();
-  }
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => const NextPage(),
+  ),
+);
+```
 
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const NextPage(),
-    ),
+Production Recommendation:
+
+- Show after every 3–5 meaningful actions.
+- Never show immediately after app launch.
+- Never spam users.
+
+---
+
+## 5. Rewarded Ads
+
+User must explicitly request the reward.
+
+Example:
+
+```dart
+if (RewardsAdsModule.isReady) {
+  await RewardsAdsModule.showRewardedAd(
+    rewardAmount: 10,
+    onRewardEarned: (reward) {
+      debugPrint("Reward: $reward");
+    },
   );
 }
 ```
 
----
+Use For:
 
-## Recommended Usage
-
-Show occasionally:
-
-- Screen transitions
-- Action completion
-- Game level completion
-
-Do NOT show repeatedly or immediately on app launch.
+- Coins
+- Premium Features
+- Extra Lives
+- Bonus Content
 
 ---
 
-# 🎁 Rewarded Ads
+## 6. Ad Lifecycle
 
-Rewarded Ads should only be displayed after explicit user interaction.
-
-Examples:
-
-- Watch ad and earn coins
-- Watch ad and unlock premium content
-- Watch ad and receive bonus points
-
----
-
-## Check Ad Availability
-
-```dart
-if (RewardsAdsModule.isReady) {
-  // Show rewarded ad
-}
-```
-
----
-
-## Example
-
-```dart
-ElevatedButton(
-  onPressed: () async {
-
-    if (RewardsAdsModule.isReady) {
-
-      await RewardsAdsModule.showRewardedAd(
-        rewardAmount: 10,
-        onRewardEarned: (reward) {
-
-          debugPrint(
-            "User earned reward: $reward",
-          );
-
-        },
-      );
-
-    }
-
-  },
-  child: const Text(
-    'Watch Ad',
-  ),
-)
-```
-
----
-
-## Reward Callback
-
-```dart
-onRewardEarned: (reward) {
-
-  // Add coins
-  // Unlock feature
-  // Give points
-
-}
-```
-
-The callback is triggered only when the reward is successfully earned.
-
----
-
-# 🔄 Ad Lifecycle
-
-Interstitial Ads:
+### Interstitial
 
 ```dart
 await InterstitialHelper.load();
 ```
 
-Loads once during app startup.
+Load at startup and reload automatically after closing.
 
-After an ad is closed, the next ad is automatically preloaded.
-
----
-
-Rewarded Ads:
+### Rewarded
 
 ```dart
 await RewardsAdsModule.loadRewardedAd();
 ```
 
-Loads once during app startup.
-
-After an ad is completed or dismissed, the next ad is automatically preloaded.
+Load at startup and reload automatically after completion.
 
 ---
 
-# 🧪 Test Ad Unit IDs
+## 7. Test IDs
 
-## Banner
+### Banner
 
 ```text
 ca-app-pub-3940256099942544/6300978111
 ```
 
-## Interstitial
+### Interstitial
 
 ```text
 ca-app-pub-3940256099942544/1033173712
 ```
 
-## Rewarded
+### Rewarded
 
 ```text
 ca-app-pub-3940256099942544/5224354917
 ```
 
-## App ID
+### App ID
 
 ```text
 ca-app-pub-3940256099942544~3347511713
@@ -276,37 +203,159 @@ ca-app-pub-3940256099942544~3347511713
 
 ---
 
-# ✅ Production Release Checklist
+## 8. Production Checklist
 
-Before publishing:
-
-- Replace Test App ID
-- Replace Banner Ad Unit ID
-- Replace Interstitial Ad Unit ID
-- Replace Rewarded Ad Unit ID
-- Test on a physical device
-- Verify AdMob account approval
-- Ensure Play Store policy compliance
+- Replace all test IDs.
+- Use real AdMob App ID.
+- Test on physical devices.
+- Verify AdMob approval.
+- Verify Play Store compliance.
+- Monitor fill rate and earnings.
+- Enable crash reporting and analytics.
 
 ---
 
-# 📋 Play Store Policy Notes
+## 9. Play Store Policy
 
 Allowed:
 
 - Banner Ads
-- Interstitial Ads during natural transitions
-- Rewarded Ads after user interaction
+- Interstitial Ads at natural transitions
+- Rewarded Ads after user action
 
 Not Allowed:
 
-- Auto-show Rewarded Ads
+- Forced Rewarded Ads
 - Excessive Interstitial Ads
-- Ads blocking app functionality
-- Ads immediately after app launch
+- Ads blocking app usage
+- Ads immediately after launch
 
-Following these guidelines helps maintain compliance with Google Play and AdMob policies.
+---
 
+# বাংলা গাইড
+
+## ১. Initialization
+
+```dart
+await AdsService.initialize();
+await InterstitialHelper.load();
+await RewardsAdsModule.loadRewardedAd();
+```
+
+App শুরু হওয়ার সময় SDK initialize করুন।
+
+---
+
+## ২. Android Setup
+
+`AndroidManifest.xml` ফাইলে আপনার AdMob App ID যুক্ত করুন।
+
+```xml
+<meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="YOUR_ADMOB_APP_ID"/>
+```
+
+---
+
+## ৩. Banner Ads
+
+ব্যবহার করুন:
+
+```dart
+const BannerAdWidget()
+```
+
+ভালো জায়গা:
+
+- Home Screen
+- Product List
+- Settings
+- Long Scroll Screen
+
+খেয়াল রাখুন যেন Ads কোনো Button বা Content ঢেকে না ফেলে।
+
+---
+
+## ৪. Interstitial Ads
+
+শুধুমাত্র Natural Transition এ দেখান।
+
+উদাহরণ:
+
+- Page Change
+- Form Submit Success
+- Game Level Complete
+
+```dart
+if (InterstitialHelper.isReady) {
+  InterstitialHelper.show();
+}
+```
+
+Production Tip:
+
+- প্রতি ৩–৫টি Meaningful Action পরে দেখান।
+- App Open করার সাথে সাথে দেখাবেন না।
+
+---
+
+## ৫. Rewarded Ads
+
+User নিজে Reward চাইলে তখন দেখান।
+
+ব্যবহার:
+
+- Coin
+- Point
+- Premium Unlock
+- Bonus Feature
+
+---
+
+## ৬. Production Best Practices
+
+✅ Frequency Control ব্যবহার করুন
+
+✅ Analytics Track করুন
+
+✅ Error Logging রাখুন
+
+✅ Real Device Testing করুন
+
+✅ Ad Loading State Handle করুন
+
+❌ User Spam করবেন না
+
+❌ Accidental Click তৈরি করবেন না
+
+---
+
+## ৭. এই Package-এ কী আছে?
+
+- Banner Ads
+- Adaptive Banner
+- Collapsible Banner
+- Interstitial Ads
+- Rewarded Ads
+- Rewarded Interstitial Ads
+- App Open Ads
+- Analytics Support
+
+Native Ads অন্তর্ভুক্ত নেই।
+
+---
+
+## ৮. Final Release Checklist
+
+- Production Ad Unit ID বসানো হয়েছে
+- App ID বসানো হয়েছে
+- Test ID সরানো হয়েছে
+- Real Device Test করা হয়েছে
+- AdMob Approved
+- Play Store Policy Follow করা হয়েছে
+
+Happy Coding 🚀
 
 
 ---
