@@ -207,6 +207,35 @@ App background থেকে resume করলে ad show হবে।
 
 ---
 
+# AdsState কী এবং কেন বানানো হয়েছিল?
+- AdsState হলো একটা data class যেটা দিয়ে বোঝা যায় — কোন ad এখন loaded আছে, কোনটা নেই। এটা মূলত UI কে ads-এর current status জানানোর জন্য ব্যবহার হয়।
+-  ধরো তুমি একটা "Watch Ad" button দেখাতে চাও — কিন্তু rewarded ad এখনো load হয়নি। তাহলে button টা দেখানো উচিত না বা disabled রাখা উচিত।
+- uses "Watch Ad" button — enable/disable
+```dart
+ValueListenableBuilder<AdsState>(
+  valueListenable: AdsManager.stateNotifier,
+  builder: (context, state, _) {
+    return ElevatedButton(
+      onPressed: state.rewardedLoaded
+          ? () async {
+              final result = await RewardedAdsHelper.show(rewardAmount: 50);
+              if (result.success) { /* reward দাও */ }
+            }
+          : null, // null মানে button disabled
+      child: Text(state.rewardedLoaded ? 'Watch Ad' : 'Ad Loading...'),
+    );
+  },
+),
+```
+
+- শুধু একটা value check করতে চাইলে
+```dart
+// একবার check — rebuild লাগবে না এমন জায়গায়
+if (AdsManager.state.rewardedLoaded) {
+  await RewardedAdsHelper.show(rewardAmount: 50);
+}
+```
+
 # 10. কোন Ad কোথায় ব্যবহার করবে
 
 ## Banner
