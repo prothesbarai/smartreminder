@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 class AdsConfig {
   AdsConfig._();
 
   /// >>> Production release এর আগে false করবে
-  static bool isTestMode = true;
+  //static bool isTestMode = true;
+  static bool isTestMode = kDebugMode;
 
   /// >>> Global Ad Enable/Disable
   static bool adsEnabled = true;
