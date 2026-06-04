@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../analytics/ads_analytics.dart';
 import '../config/ads_config.dart';
 import '../config/ads_ids.dart';
+import '../models/ads_state_notifier.dart';
 import '../utils/ad_retry_helper.dart';
 
 class AppOpenAdHelper {
@@ -37,15 +39,18 @@ class AppOpenAdHelper {
           _isLoading = false;
           AdsAnalytics.logLoaded('App Open');
           AdsAnalytics.trackPaidEvent(ad);
+          AdsStateNotifier.update(appOpenLoaded: true); // loaded
           completer.complete();
         },
         onAdFailedToLoad: (error) {
           _isLoading = false;
           AdsAnalytics.logFailed('App Open', error.message);
+          AdsStateNotifier.update(appOpenLoaded: false); // failed
           completer.completeError(error.message);
         },
       ),
     );
+
     return completer.future;
   }
 
@@ -58,6 +63,7 @@ class AppOpenAdHelper {
 
   static Future<bool> show({int cooldownSeconds = 300}) async {
     if (!canShow(cooldownSeconds: cooldownSeconds)) return false;
+
     try {
       _isShowing = true;
       _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
@@ -68,12 +74,14 @@ class AppOpenAdHelper {
           _isShowing = false;
           _appOpenAd = null;
           _lastShownTime = DateTime.now();
-          load();
+          AdsStateNotifier.update(appOpenLoaded: false); // >>> dismiss after false
+          load(); // New load — After End again true
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
           ad.dispose();
           _isShowing = false;
           _appOpenAd = null;
+          AdsStateNotifier.update(appOpenLoaded: false);
           load();
         },
       );
