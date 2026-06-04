@@ -25,13 +25,26 @@ class AdsManager {
 
     try {
       await MobileAds.instance.initialize();
-      if (AdsConfig.interstitialEnabled) await InterstitialHelper.load();
-      if (AdsConfig.rewardedEnabled) await RewardedAdsHelper.load();
-      if (AdsConfig.rewardedInterstitialEnabled) await RewardedInterstitialHelper.load();
+
+      await Future.wait([
+        if (AdsConfig.interstitialEnabled)
+          InterstitialHelper.load(),
+
+        if (AdsConfig.rewardedEnabled)
+          RewardedAdsHelper.load(),
+
+        if (AdsConfig.rewardedInterstitialEnabled)
+          RewardedInterstitialHelper.load(),
+
+        if (AdsConfig.appOpenEnabled)
+          AppOpenAdHelper.load(),
+      ]);
+
       if (AdsConfig.appOpenEnabled) {
-        await AppOpenAdHelper.load();
         AppOpenLifecycleManager.instance.initialize();
       }
+
+
       _initialized = true;
       AdsStateNotifier.update(initialized: true);
     } catch (e) {

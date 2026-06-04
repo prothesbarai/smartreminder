@@ -9,6 +9,7 @@ import '../features/reminder_generate/widgets/reminder_form_popup.dart';
 import '../features/schedule_suggest/screens/schedule_list_screen.dart';
 import '../features/schedule_suggest/widgets/schedule_form_popup.dart';
 import '../features/user_account_with_plan/screen/user_account_screen.dart';
+import 'ads_test_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,13 +22,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   int currentIndex = 0;
-  final screens = const [ReminderListScreen(),ScheduleListScreen(),UserAccountScreen()];
+  final screens = const [AdsTestScreen(),ReminderListScreen(),ScheduleListScreen(),UserAccountScreen()];
   void onTabChange(int index){setState(() {currentIndex = index;});}
 
   // >>> Every Page AppBar Title and Icon ======================================
   SrAppBar buildAppBar() {
     switch (currentIndex) {
       case 0:
+        return SrAppBar(appBarTitle: "Ads Test",);
+      case 1:
         return SrAppBar(
           appBarTitle: "Reminder",
           actions: [
@@ -35,14 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 10),
           ],
         );
-      case 1:
+      case 2:
         return SrAppBar(
           appBarTitle: "Schedule",
           actions: [
             IconButton(icon: const Icon(Icons.calendar_month), onPressed: () {ScheduleFormPopup.show(context);},),
           ],
         );
-      case 2:
+      case 3:
         return SrAppBar(
           appBarTitle: "My Account",
           actions: [

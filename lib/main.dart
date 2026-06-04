@@ -2,22 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:smartreminder/screens/home_screen.dart';
+import 'package:smartreminder/screens/splash_screen.dart';
 import 'core/service/hive_service.dart';
 import 'core/utils/app_colors.dart';
 import 'features/ads/ads_manager.dart';
-import 'features/biometric_security/biometric_guard.dart';
 import 'features/reminder_generate/providers/reminder_provider.dart';
 import 'features/reminder_generate/services/notification_service.dart';
 import 'features/biometric_security/logic/biometric_provider.dart';
 import 'features/schedule_suggest/providers/schedule_provider.dart';
 import 'features/user_account_with_plan/plan/plan_service.dart';
 
-void main() async {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  // >>> Hive Service ==========================================================
-  await HiveService.initHive();
-  // <<< Hive Service ==========================================================
+
+  await Future.wait([
+    // >>> Hive Service ========================================================
+    HiveService.initHive(),
+    // <<< Hive Service ========================================================
+
+    // >>> For Notification ====================================================
+    NotificationService.init(),
+    // <<< For Notification ====================================================
+
+    // >>> UI Always Portrait Mode =============================================
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown,]),
+    // <<< UI Always Portrait Mode =============================================
+
+  ]);
 
   // >>> VALIDATE SUBSCRIPTION =================================================
   PlanService.validateSubscription();
@@ -28,18 +39,10 @@ void main() async {
   await biometricProvider.init();
   // <<< Initialize Biometric Provider =========================================
 
-  // >>> For Notification ======================================================
-  await NotificationService.init();
-  // <<< For Notification ======================================================
-
-  // >>> UI Always Portrait Mode ===============================================
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown,]);
-  // <<< UI Always Portrait Mode ===============================================
-
-
   // >>> For Ads Purpose =======================================================
-  await AdsManager.initialize();
+  AdsManager.initialize();
   // <<< For Ads Purpose =======================================================
+
 
   runApp(
     MultiProvider(
@@ -90,7 +93,7 @@ class _ProthesAppState extends State<ProthesApp> {
           appBarTheme: AppBarThemeData(backgroundColor: AppColors.secondaryColor,centerTitle: true,foregroundColor: AppColors.primaryColor,elevation: 1,iconTheme: IconThemeData(color: AppColors.primaryColor)),
           drawerTheme: DrawerThemeData(backgroundColor: AppColors.primaryColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(20),bottomRight: Radius.circular(20)))),
         ),
-        home: BiometricGuard(child: const HomeScreen(),)
+        home: SplashScreen()
       ),
     );
   }

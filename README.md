@@ -13,11 +13,22 @@
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();   // ← আগে Firebase
-  await AdsManager.initialize();    // ← তারপর Ads
+  // >>> For Ads Purpose =======================================================
+  AdsManager.initialize();
+  // <<< For Ads Purpose =======================================================
   runApp(MyApp());
 }
 ```
+- **AdsManager.initialize();** এ **await** না দিলে => 
+    **Ads initialization background এ শুরু হবে।** 
+    **Flutter সঙ্গে সঙ্গে runApp() চালাবে।**
+    **App দ্রুত open হবে।**
+    **SplashScreen/UI আগে দেখা যাবে।** 
+    **Ads পরে ready হবে।** 
+    **Ads background এ load হবে।**
+
 - App বন্ধ হওয়ার সময় Root widget-এর dispose() এ: main.dart file এ
+
 ```dart
 @override
 void dispose() {
@@ -25,6 +36,40 @@ void dispose() {
   super.dispose();
 }
 ```
+
+- Splash Screen for Ads Load 
+- SplashScreen-এ AdsManager.stateNotifier listen করে Ads Ready হলে navigate
+
+```dart
+  // >>> When Ads Ready Then Navigate Home =====================================
+  @override
+  void initState() {
+    super.initState();
+    AdsManager.stateNotifier.addListener(_onAdsStateChanged);
+
+    // >>> Even if the ads are not ready, they will go to Home after 5 seconds
+    Future.delayed(const Duration(seconds: 5), () {
+      if (!_navigated && mounted) {_goToHome();}
+    });
+    // >>> If it is already ready
+    if (AdsManager.state.initialized) {_goToHome();}
+  }
+
+  bool _navigated = false;
+  void _onAdsStateChanged() {if (AdsManager.state.initialized) {_goToHome();}}
+
+  Future<void> _goToHome() async {
+    if (_navigated || !mounted) return;
+    _navigated = true;
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const BiometricGuard(child: HomeScreen(),),),);
+  }
+  // <<< When Ads Ready Then Navigate Home =====================================
+```
+এতে:
+Ads 5 সেকেন্ডের মধ্যে ready হলে → সাথে সাথে HomeScreen।
+Ads ready না হলেও → 5 সেকেন্ড পরে HomeScreen।
+User কখনো SplashScreen-এ আটকে থাকবে না।
+একাধিকবার Navigate হওয়ার ঝুঁকি থাকবে না, কারণ _navigated guard আছে।
 
 ---
 
