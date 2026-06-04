@@ -5,32 +5,17 @@
 ---
 ---
 
-# 📢 Google Mobile Ads Integration Guide (Production Ready)
-# 📢 Google Mobile Ads ইন্টিগ্রেশন গাইড (Production Ready)
+# Flutter Google Mobile Ads Module – A to Z Guide (বাংলা)
 
-## Supported Ads / সাপোর্টেড Ads
-
-✅ Banner Ads  
-✅ Interstitial Ads  
-✅ Rewarded Ads
-
-❌ Native Ads (Removed / ব্যবহার করা হচ্ছে না)
-
----
-
-# English Guide
-
-## 1. Initialization
+## 1. Main.dart এ কী করতে হবে
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await AdsService.initialize();
+  await AdsManager.initialize();
 
-  await InterstitialHelper.load();
-
-  await RewardsAdsModule.loadRewardedAd();
+  AppOpenLifecycleManager.instance.initialize();
 
   runApp(const MyApp());
 }
@@ -38,325 +23,319 @@ void main() async {
 
 ---
 
-## 2. Android Configuration
+## 2. AndroidManifest.xml
 
-File:
-
-```text
-android/app/src/main/AndroidManifest.xml
-```
-
-Inside `<application>`:
+`android/app/src/main/AndroidManifest.xml`
 
 ```xml
-<meta-data
-    android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="YOUR_ADMOB_APP_ID"/>
+<manifest>
+    <application>
+        
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy"/>
+
+    </application>
+</manifest>
 ```
 
-Replace with your production AdMob App ID.
+Google AdMob App ID বসাতে হবে।
 
 ---
 
-## 3. Banner Ads
+## 3. প্রতিটি ফাইল কী কাজ করে
 
-Widget:
+### AdsManager
+সব Ads initialize করে।
 
-```dart
-const BannerAdWidget()
-```
+### AdsConfig
+Ads enable/disable এবং test mode control করে।
 
-Example:
+### AdsIds
+সব Ad Unit ID রাখে।
 
-```dart
-Column(
-  children: [
-    Expanded(child: HomePage()),
-    const BannerAdWidget(),
-  ],
-)
-```
+### AdsAnalytics
+Ad loaded, failed, revenue log করে।
 
-Recommended:
+### BannerAdHelper
+Banner তৈরি করে।
 
-- Home Screen
-- Product List
-- Settings Page
-- Long Scroll Screens
+### AdaptiveBannerWidget
+Responsive Banner দেখায়।
 
-Avoid blocking buttons or content.
+### CollapsibleBannerWidget
+Collapsible Banner দেখায়।
+
+### InterstitialHelper
+Interstitial load/show করে।
+
+### InterstitialFrequencyController
+কত click পরে ad দেখাবে control করে।
+
+### RewardedAdsHelper
+Rewarded Ad show করে।
+
+### RewardedInterstitialHelper
+Rewarded Interstitial show করে।
+
+### AppOpenAdHelper
+App resume/open হলে App Open Ad দেখায়।
+
+### AppOpenLifecycleManager
+Lifecycle observe করে App Open trigger করে।
 
 ---
 
-## 4. Interstitial Ads
-
-Show only during natural transitions.
-
-Examples:
-
-- Screen change
-- Action completed
-- Game level finished
-
-Check:
+# 4. Banner Ad UI তে ব্যবহার
 
 ```dart
-if (InterstitialHelper.isReady) {
-  InterstitialHelper.show();
-}
-```
+Scaffold(
+  body: Column(
+    children: [
 
-Example:
+      Expanded(
+        child: YourScreen(),
+      ),
 
-```dart
-if (InterstitialHelper.isReady) {
-  InterstitialHelper.show();
-}
-
-Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => const NextPage(),
+      const AdaptiveBannerWidget(),
+    ],
   ),
 );
 ```
 
-Production Recommendation:
+অথবা
 
-- Show after every 3–5 meaningful actions.
-- Never show immediately after app launch.
-- Never spam users.
+```dart
+bottomNavigationBar: const AdaptiveBannerWidget(),
+```
 
 ---
 
-## 5. Rewarded Ads
-
-User must explicitly request the reward.
-
-Example:
+# 5. Collapsible Banner
 
 ```dart
-if (RewardsAdsModule.isReady) {
-  await RewardsAdsModule.showRewardedAd(
-    rewardAmount: 10,
-    onRewardEarned: (reward) {
-      debugPrint("Reward: $reward");
-    },
+bottomNavigationBar: const CollapsibleBannerWidget(),
+```
+
+---
+
+# 6. Interstitial Ad ব্যবহার
+
+Page Change / Button Click এর আগে
+
+```dart
+await InterstitialHelper.showIfEligible(
+  frequency: 3,
+  cooldownSeconds: 60,
+);
+```
+
+উদাহরণ
+
+```dart
+onPressed: () async {
+
+  await InterstitialHelper.showIfEligible();
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const DetailsPage(),
+    ),
   );
 }
 ```
 
-Use For:
-
-- Coins
-- Premium Features
-- Extra Lives
-- Bonus Content
-
 ---
 
-## 6. Ad Lifecycle
-
-### Interstitial
+# 7. Rewarded Ad ব্যবহার
 
 ```dart
-await InterstitialHelper.load();
-```
+final result = await RewardedAdsHelper.show(
+  rewardAmount: 100,
+  rewardType: "coins",
+);
 
-Load at startup and reload automatically after closing.
-
-### Rewarded
-
-```dart
-await RewardsAdsModule.loadRewardedAd();
-```
-
-Load at startup and reload automatically after completion.
-
----
-
-## 7. Test IDs
-
-### Banner
-
-```text
-ca-app-pub-3940256099942544/6300978111
-```
-
-### Interstitial
-
-```text
-ca-app-pub-3940256099942544/1033173712
-```
-
-### Rewarded
-
-```text
-ca-app-pub-3940256099942544/5224354917
-```
-
-### App ID
-
-```text
-ca-app-pub-3940256099942544~3347511713
-```
-
----
-
-## 8. Production Checklist
-
-- Replace all test IDs.
-- Use real AdMob App ID.
-- Test on physical devices.
-- Verify AdMob approval.
-- Verify Play Store compliance.
-- Monitor fill rate and earnings.
-- Enable crash reporting and analytics.
-
----
-
-## 9. Play Store Policy
-
-Allowed:
-
-- Banner Ads
-- Interstitial Ads at natural transitions
-- Rewarded Ads after user action
-
-Not Allowed:
-
-- Forced Rewarded Ads
-- Excessive Interstitial Ads
-- Ads blocking app usage
-- Ads immediately after launch
-
----
-
-# বাংলা গাইড
-
-## ১. Initialization
-
-```dart
-await AdsService.initialize();
-await InterstitialHelper.load();
-await RewardsAdsModule.loadRewardedAd();
-```
-
-App শুরু হওয়ার সময় SDK initialize করুন।
-
----
-
-## ২. Android Setup
-
-`AndroidManifest.xml` ফাইলে আপনার AdMob App ID যুক্ত করুন।
-
-```xml
-<meta-data
-    android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="YOUR_ADMOB_APP_ID"/>
-```
-
----
-
-## ৩. Banner Ads
-
-ব্যবহার করুন:
-
-```dart
-const BannerAdWidget()
-```
-
-ভালো জায়গা:
-
-- Home Screen
-- Product List
-- Settings
-- Long Scroll Screen
-
-খেয়াল রাখুন যেন Ads কোনো Button বা Content ঢেকে না ফেলে।
-
----
-
-## ৪. Interstitial Ads
-
-শুধুমাত্র Natural Transition এ দেখান।
-
-উদাহরণ:
-
-- Page Change
-- Form Submit Success
-- Game Level Complete
-
-```dart
-if (InterstitialHelper.isReady) {
-  InterstitialHelper.show();
+if(result.success){
+   print("User Earned Reward");
 }
 ```
 
-Production Tip:
+উদাহরণ
 
-- প্রতি ৩–৫টি Meaningful Action পরে দেখান।
-- App Open করার সাথে সাথে দেখাবেন না।
+```dart
+ElevatedButton(
+  onPressed: () async {
 
----
+    final reward =
+        await RewardedAdsHelper.show(
+          rewardAmount: 50,
+        );
 
-## ৫. Rewarded Ads
+    if(reward.success){
 
-User নিজে Reward চাইলে তখন দেখান।
+      coins += reward.reward;
 
-ব্যবহার:
-
-- Coin
-- Point
-- Premium Unlock
-- Bonus Feature
-
----
-
-## ৬. Production Best Practices
-
-✅ Frequency Control ব্যবহার করুন
-
-✅ Analytics Track করুন
-
-✅ Error Logging রাখুন
-
-✅ Real Device Testing করুন
-
-✅ Ad Loading State Handle করুন
-
-❌ User Spam করবেন না
-
-❌ Accidental Click তৈরি করবেন না
+    }
+  },
+  child: const Text("Watch Ad"),
+)
+```
 
 ---
 
-## ৭. এই Package-এ কী আছে?
+# 8. Rewarded Interstitial
 
-- Banner Ads
-- Adaptive Banner
-- Collapsible Banner
-- Interstitial Ads
-- Rewarded Ads
-- Rewarded Interstitial Ads
-- App Open Ads
-- Analytics Support
-
-Native Ads অন্তর্ভুক্ত নেই।
+```dart
+final result =
+ await RewardedInterstitialHelper.show(
+    rewardAmount: 50,
+ );
+```
 
 ---
 
-## ৮. Final Release Checklist
+# 9. App Open Ad
 
-- Production Ad Unit ID বসানো হয়েছে
-- App ID বসানো হয়েছে
-- Test ID সরানো হয়েছে
-- Real Device Test করা হয়েছে
-- AdMob Approved
-- Play Store Policy Follow করা হয়েছে
+তুমি already setup করে ফেলেছো।
 
-Happy Coding 🚀
+```dart
+AppOpenLifecycleManager.instance.initialize();
+```
 
+App background থেকে resume করলে ad show হবে।
+
+---
+
+# 10. কোন Ad কোথায় ব্যবহার করবে
+
+## Banner
+
+ভালো জায়গা
+
+- Home Page
+- Category Page
+- News List
+- Product List
+
+খারাপ জায়গা
+
+- Login Page
+- Payment Page
+- OTP Screen
+
+---
+
+## Interstitial
+
+ভালো জায়গা
+
+- ২-৫ page navigation পর
+- Level Complete
+- Article Close
+
+খারাপ জায়গা
+
+- App Open এর সাথে সাথে
+- Back Button press করলেই
+- প্রতি click এ
+
+---
+
+## Rewarded
+
+ভালো জায়গা
+
+- Extra Coins
+- Unlock Feature
+- Bonus Life
+- Premium Content
+
+Reward user কে অবশ্যই কিছু দিতে হবে।
+
+---
+
+## Rewarded Interstitial
+
+ভালো জায়গা
+
+- Bonus Continue
+- Unlock Next Step
+
+---
+
+## App Open
+
+ভালো জায়গা
+
+- App Resume
+- Cold Start
+
+খুব ঘনঘন না।
+
+---
+
+# 11. Play Store Policy Safe Setup
+
+Recommended
+
+- Banner = Always
+- Interstitial = Every 3-5 Click
+- Cooldown = 60-120 sec
+- Rewarded = User Action
+- App Open = 5 minute cooldown
+
+Never
+
+- Accident click তৈরি করা
+- Button এর খুব কাছে Banner
+- Reward না দিয়ে Rewarded ব্যবহার
+- Payment Screen এ Ad
+- Exit আটকিয়ে Ad
+
+---
+
+# 12. Production Release Checklist
+
+```dart
+AdsConfig.isTestMode = false;
+```
+
+তারপর
+
+```dart
+_androidBannerProd
+_androidInterstitialProd
+_androidRewardedProd
+_androidRewardedInterstitialProd
+_androidNativeProd
+_androidAppOpenProd
+```
+
+সব Production ID বসাতে হবে।
+
+---
+
+# 13. Recommended Structure
+
+Home Screen
+- Banner
+
+Category Screen
+- Banner
+
+Details Screen
+- Interstitial on navigation
+
+Premium Unlock
+- Rewarded
+
+App Resume
+- App Open
+
+---
+
+এই Architecture Play Store friendly, reusable এবং scalable।
 
 ---
 ---

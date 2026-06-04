@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'app_open/app_open_ad_helper.dart';
 import 'config/ads_config.dart';
@@ -14,11 +15,16 @@ class AdsManager {
   static Future<void> initialize() async {
     if (_initialized) return;
     if (!AdsConfig.adsEnabled) return;
-    await MobileAds.instance.initialize();
-    if (AdsConfig.interstitialEnabled) {await InterstitialHelper.load();}
-    if (AdsConfig.rewardedEnabled) {await RewardedAdsHelper.load();}
-    if (AdsConfig.rewardedInterstitialEnabled) {await RewardedInterstitialHelper.load();}
-    if (AdsConfig.appOpenEnabled) {await AppOpenAdHelper.load();}
-    _initialized = true;
+
+    try {
+      await MobileAds.instance.initialize();
+      if (AdsConfig.interstitialEnabled) {await InterstitialHelper.load();}
+      if (AdsConfig.rewardedEnabled) {await RewardedAdsHelper.load();}
+      if (AdsConfig.rewardedInterstitialEnabled) {await RewardedInterstitialHelper.load();}
+      if (AdsConfig.appOpenEnabled) {await AppOpenAdHelper.load();}
+      _initialized = true;
+    } catch (e) {
+      debugPrint('Ads initialization failed: $e');
+    }
   }
 }
