@@ -12,12 +12,17 @@
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await AdsManager.initialize();
-
-  AppOpenLifecycleManager.instance.initialize();
-
-  runApp(const MyApp());
+  await Firebase.initializeApp();   // ← আগে Firebase
+  await AdsManager.initialize();    // ← তারপর Ads
+  runApp(MyApp());
+}
+```
+- App বন্ধ হওয়ার সময় Root widget-এর dispose() এ: main.dart file এ
+```dart
+@override
+void dispose() {
+  AdsManager.dispose();  // ← lifecycle observer বন্ধ করে
+  super.dispose();
 }
 ```
 
@@ -37,6 +42,17 @@ void main() async {
 
     </application>
 </manifest>
+```
+
+## iOS — ios/Runner/Info.plist
+```xml
+<!-- এটা না দিলে iOS-এ app crash করবে -->
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx</string>
+
+<!-- iOS 14+ এর জন্য tracking permission -->
+<key>NSUserTrackingUsageDescription</key>
+<string>This identifier will be used to deliver personalized ads to you.</string>
 ```
 
 Google AdMob App ID বসাতে হবে।

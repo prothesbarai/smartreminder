@@ -6,7 +6,6 @@ import 'package:smartreminder/screens/home_screen.dart';
 import 'core/service/hive_service.dart';
 import 'core/utils/app_colors.dart';
 import 'features/ads/ads_manager.dart';
-import 'features/ads/app_open/app_open_lifecycle_manager.dart';
 import 'features/biometric_security/biometric_guard.dart';
 import 'features/reminder_generate/providers/reminder_provider.dart';
 import 'features/reminder_generate/services/notification_service.dart';
@@ -40,7 +39,6 @@ void main() async {
 
   // >>> For Ads Purpose =======================================================
   await AdsManager.initialize();
-  AppOpenLifecycleManager.instance.initialize();
   // <<< For Ads Purpose =======================================================
 
   runApp(
@@ -63,8 +61,21 @@ void main() async {
   );
 }
 
-class ProthesApp extends StatelessWidget {
+class ProthesApp extends StatefulWidget {
   const ProthesApp({super.key});
+
+  @override
+  State<ProthesApp> createState() => _ProthesAppState();
+}
+
+class _ProthesAppState extends State<ProthesApp> {
+
+  @override
+  void dispose() {
+    AdsManager.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
