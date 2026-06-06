@@ -27,7 +27,7 @@ void main() async {
     **Ads পরে ready হবে।** 
     **Ads background এ load হবে।**
 
-- App বন্ধ হওয়ার সময় Root widget-এর dispose() এ: main.dart file এ
+- App বন্ধ হওয়ার সময় Root widget-এর dispose() এ: **main.dart** file এ
 
 ```dart
 @override
