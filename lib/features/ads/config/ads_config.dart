@@ -7,21 +7,21 @@ class AdsConfig {
   //static bool isTestMode = true;
   static bool isTestMode = kDebugMode;
 
-  /// >>> Global Ad Enable/Disable
+  /// >>> Global Ad Enable/Disable ( All Ads Control )
   static bool adsEnabled = true;
 
-  /// >>>> Banner Enable
+  /// >>>> Only Banner Ads Enable/Disable
   static bool bannerEnabled = false;
 
-  /// >>> Interstitial Enable
+  /// >>> Only Interstitial Ads /Disable
   static bool interstitialEnabled = true;
 
-  /// >>> Rewarded Enable
+  /// >>> Only Rewarded Ads Enable/Disable
   static bool rewardedEnabled = true;
 
-  /// >>> Rewarded Interstitial Enable
+  /// >>> Only Rewarded Interstitial Ads Enable/Disable
   static bool rewardedInterstitialEnabled = true;
 
-  /// >>> App Open Enable
-  static bool appOpenEnabled = true;
+  /// >>> Only App Open Ads Enable/Disable ( Use When App Open Then Show ads )
+  static bool appOpenEnabled = false;
 }
