@@ -44,20 +44,23 @@ class _BottomSheetPlannerState extends State<BottomSheetPlanner> {
                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), gradient: AppGradients.glass, border: Border.all(color: AppColors.border,), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 18, offset: const Offset(0, 10),),],),
                     child: Row(
                       children: [
-                        // >>> ICON
+                        // >>> ICON ============================================
                         Container(
                           height: 52,
                           width: 52,
                           decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppGradients.gold,),
                           child: const Icon(Icons.workspace_premium, color: Colors.white,),
                         ),
+                        // <<< ICON ============================================
+
                         const SizedBox(width: 12),
-                        // >>>> TEXT AREA
+
+                        // >>>> TEXT AREA ======================================
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // >>>>  TITLE + BADGE
+                              // >>>>  TITLE + BADGE ===========================
                               Row(
                                 children: [
                                   Expanded(child: Text(plan.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold,),),),
@@ -69,6 +72,7 @@ class _BottomSheetPlannerState extends State<BottomSheetPlanner> {
                                   ),
                                 ],
                               ),
+                              // <<<<  TITLE + BADGE ===========================
 
                               const SizedBox(height: 6),
                               Text("${plan.days} Days Access", style: const TextStyle(color: AppColors.textSecondary, fontSize: 13,),),
@@ -86,10 +90,11 @@ class _BottomSheetPlannerState extends State<BottomSheetPlanner> {
                             ],
                           ),
                         ),
+                        // <<<< TEXT AREA ======================================
 
                         const SizedBox(width: 10),
 
-                        // BUTTON (GRADIENT SYSTEM)
+                        // >>> BUTTON (GRADIENT SYSTEM) ========================
                         SizedBox(
                           height: 38,
                           child: ElevatedButton(
@@ -117,6 +122,7 @@ class _BottomSheetPlannerState extends State<BottomSheetPlanner> {
                             ),
                           ),
                         ),
+                        // <<< BUTTON (GRADIENT SYSTEM) ========================
                       ],
                     ),
                   );

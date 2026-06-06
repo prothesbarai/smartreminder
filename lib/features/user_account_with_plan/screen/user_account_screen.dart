@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../plan/plan_service.dart';
 import '../service/user_account_service.dart';
 import '../widget/bottom_sheet_planner.dart';
+import '../widget/premium_screen.dart';
+import '../widget/purchase_type_dialog.dart';
 
 class UserAccountScreen extends StatefulWidget {
   const UserAccountScreen({super.key});
@@ -104,8 +106,18 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   ),
                   trailing: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: isPlanActive ? Colors.grey : const Color(0xFF6A5AE0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
-                    onPressed: isPlanActive ? null : (){
-                      showBottomSheetPlanner(context, onUpdate: () {setState(() {});},);
+                    onPressed: isPlanActive ? null : () {
+                      showPurchaseTypeDialog(
+                        context,
+                        onCoinsSelected: () => showBottomSheetPlanner(context, onUpdate: () => setState(() {})),
+                        onPremiumSelected: () => showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          useSafeArea: false,
+                          backgroundColor: Colors.transparent,
+                          builder: (_) => const PremiumScreen(),
+                        ),
+                      );
                     },
                     child: const Text("Upgrade"),
                   ),
