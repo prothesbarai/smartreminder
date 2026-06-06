@@ -170,7 +170,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         children: [
                           Icon(Icons.monetization_on_rounded, size: 20.sp),
                           const SizedBox(width: 8),
-                          Text("Spend ${selected['bdt']} BDT", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700, letterSpacing: 0.5),),
+                          Text("Unlock ${selected['bdt']} BDT", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700, letterSpacing: 0.5),),
                         ],
                       ),
                     ),
@@ -267,44 +267,65 @@ class _PlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: isSelected ? const Color(0xFFFFA000) : const Color(0xFFE0E0E0), width: isSelected ? 2 : 1),
-          boxShadow: isSelected ? [BoxShadow(color: const Color(0xFFFFA000).withValues(alpha: 0.15), blurRadius: 12.r, spreadRadius: 2)] : [],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (badge != null) ...[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
-                decoration: BoxDecoration(color: Color(0xFFFFF9C4), borderRadius: BorderRadius.circular(20.r), border: Border.all(color: const Color(0xFFFFD600))),
-                child: Text(badge!, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700, color: Color(0xFF8B6F00))),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // >>> Card ==========================================================
+          Container(
+            margin: badge != null ? EdgeInsets.only(top: 10.h) : EdgeInsets.zero,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h,),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14.r), border: Border.all(color: isSelected ? const Color(0xFFFFA000) : const Color(0xFFE0E0E0), width: isSelected ? 2 : 1,), boxShadow: isSelected ? [BoxShadow(color: const Color(0xFFFFA000).withValues(alpha: 0.15), blurRadius: 12.r, spreadRadius: 2,)] : [],),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (badge != null)...[
+                  SizedBox(height: 8.h),
+                ],
+
+                Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(label, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700,),),
+                    if (isSelected)...[
+                      Icon(Icons.check_circle, color: const Color(0xFFFFA000), size: 22.sp,),
+                    ],
+                  ],
+                ),
+                SizedBox(height: 4.h),
+                Row(
+                  children: [
+                    Icon(Icons.monetization_on_rounded, size: 14.sp, color: const Color(0xFFFFA000),),
+                    SizedBox(width: 4.w),
+                    Text("$bdt BDT", style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600,),),
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                Text("$days days access", style: TextStyle(fontSize: 11.sp, color: const Color(0xFF999999),),),
+              ],
+            ),
+          ),
+          // <<< Card ==========================================================
+
+
+          // >>> Legend Badge ==================================================
+          if (badge != null)...[
+            Positioned(
+              left: 16.w,
+              top: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 3.h,),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.r),),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h,),
+                  decoration: BoxDecoration(color: const Color(0xFFFFF9C4), borderRadius: BorderRadius.circular(20.r), border: Border.all(color: const Color(0xFFFFD600),),),
+                  child: Text(badge!, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700, color: const Color(0xFF8B6F00),),),
+                ),
               ),
-              const SizedBox(height: 8),
-            ],
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(label, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700, color: Colors.black)),
-                if (isSelected) Icon(Icons.check_circle, color: Color(0xFFFFA000), size: 22.sp),
-              ],
             ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(Icons.monetization_on_rounded, size: 14.sp, color: Color(0xFFFFA000)),
-                const SizedBox(width: 4),
-                Text("$bdt BDT", style: TextStyle(fontSize: 13.sp, color: Color(0xFF555555), fontWeight: FontWeight.w600)),
-              ],
-            ),
-            const SizedBox(height: 2),
-            Text("$days days access", style: TextStyle(fontSize: 11.sp, color: Color(0xFF999999))),
           ],
-        ),
+          // <<< Legend Badge ==================================================
+        ],
       ),
     );
   }
