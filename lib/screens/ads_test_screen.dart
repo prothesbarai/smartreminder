@@ -5,6 +5,8 @@ import '../features/ads/banner/adaptive_banner_widget.dart';
 import '../features/ads/banner/collapsible_banner_widget.dart';
 import '../features/ads/interstitial/interstitial_helper.dart';
 import '../features/ads/rewarded/rewarded_ads_helper.dart';
+import '../features/ads/rewarded_interstitial/rewarded_interstitial_helper.dart';
+import '../features/ads/models/ads_state.dart';
 class AdsTestScreen extends StatefulWidget {
   const AdsTestScreen({super.key});
 
@@ -54,26 +56,43 @@ class _AdsTestScreenState extends State<AdsTestScreen> {
             const SizedBox(height: 10,),
             Divider(),
 
-            const SizedBox(height: 10,),
-            Text("Rewarded  Ad"),
-            ElevatedButton(
-              onPressed: () async {
+            // >>> For Get Coin From Rewarded ads or RewardedInterstitial ads ==
+            ValueListenableBuilder<AdsState>(
+              valueListenable: AdsManager.stateNotifier,
+              builder: (context, state, _) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
 
-                final reward =
-                await RewardedAdsHelper.show(
-                  rewardAmount: 50,
+                    // >>> Rewarded Ad =========================================
+                    Text("Rewarded Ad"),
+                    ElevatedButton(
+                      onPressed: state.rewardedLoaded ? () async {
+                        final reward = await RewardedAdsHelper.show(rewardAmount: 50);
+                        if (reward.success) {debugPrint("Reward earned: ${reward.reward}");}
+                      } : null,
+                      child: Text(state.rewardedLoaded ? "Watch Ad (+50)" : "Ad Loading..."),
+                    ),
+                    // <<< Rewarded Ad =========================================
+                    const Divider(),
+                    const SizedBox(height: 20),
+
+                    // >>> Rewarded Interstitial Ad ============================
+                    Text("Rewarded Interstitial Ad"),
+                    ElevatedButton(
+                      onPressed: state.rewardedInterstitialLoaded ? () async {
+                        final reward = await RewardedInterstitialHelper.show(rewardAmount: 100);
+                        if (reward.success) {debugPrint("Reward earned: ${reward.reward}");}
+                      } : null,
+                      child: Text(state.rewardedInterstitialLoaded ? "Watch Ad (+100)" : "Ad Loading..."),
+                    ),
+                    // <<< Rewarded Interstitial Ad ============================
+
+                  ],
                 );
-
-                if(reward.success){
-
-                  debugPrint("Prothes >>> ${reward.reward}");
-
-                }
               },
-              child: const Text("Watch Ad"),
             ),
-            const SizedBox(height: 10,),
-            Divider(),
+            // <<< For Get Coin From Rewarded ads or RewardedInterstitial ads ==
           ],
         ),
       )

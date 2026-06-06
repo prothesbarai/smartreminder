@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../config/ads_config.dart';
 import '../config/ads_ids.dart';
 
 class CollapsibleBannerWidget extends StatefulWidget {
@@ -17,7 +18,12 @@ class _CollapsibleBannerWidgetState extends State<CollapsibleBannerWidget> {
   @override
   void initState() {
     super.initState();
-    _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (AdsConfig.adsEnabled && AdsConfig.bannerEnabled) {
+        _load();
+      }
+    });
+    //_load();
   }
 
   Future<void> _load() async {

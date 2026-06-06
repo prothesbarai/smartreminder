@@ -11,7 +11,7 @@ class AdsConfig {
   static bool adsEnabled = true;
 
   /// >>>> Banner Enable
-  static bool bannerEnabled = true;
+  static bool bannerEnabled = false;
 
   /// >>> Interstitial Enable
   static bool interstitialEnabled = true;
@@ -21,9 +21,6 @@ class AdsConfig {
 
   /// >>> Rewarded Interstitial Enable
   static bool rewardedInterstitialEnabled = true;
-
-  /// >>> Native Enable
-  static bool nativeEnabled = true;
 
   /// >>> App Open Enable
   static bool appOpenEnabled = true;

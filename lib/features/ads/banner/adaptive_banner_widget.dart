@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../config/ads_config.dart';
 import 'banner_ad_helper.dart';
 
 class AdaptiveBannerWidget extends StatefulWidget {
@@ -16,7 +17,11 @@ class _AdaptiveBannerWidgetState extends State<AdaptiveBannerWidget> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {_loadBanner();},);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (AdsConfig.adsEnabled && AdsConfig.bannerEnabled) {
+        _loadBanner();
+      }
+    });
   }
 
   Future<void> _loadBanner() async {
