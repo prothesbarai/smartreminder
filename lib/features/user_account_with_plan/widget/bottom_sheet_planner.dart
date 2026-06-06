@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartreminder/features/user_account_with_plan/widget/show_no_balance_dialogue.dart';
+import 'package:smartreminder/features/user_account_with_plan/widget/show_insufficient_coins_dialogue.dart';
 import '../../../core/utils/app_colors.dart';
 import '../plan/plan_service.dart';
 import '../plan/subscription_plans.dart';
@@ -105,7 +105,7 @@ class _BottomSheetPlannerState extends State<BottomSheetPlanner> {
                                 showDialog(
                                   context: context,
                                   barrierColor: Colors.black.withValues(alpha: 0.7),
-                                  builder: (_) => ShowNoBalanceDialogue(plan: plan, onBalanceAdded: () {setState(() {});},),
+                                  builder: (_) => ShowInsufficientCoinsDialogue(plan: plan, onBalanceAdded: () {setState(() {});},),
                                 );
                               }else {
                                 widget.onUpdate?.call();

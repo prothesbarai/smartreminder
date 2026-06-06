@@ -4,16 +4,16 @@ import '../../../core/utils/app_colors.dart';
 import '../plan/subscription_plan_model.dart';
 import '../service/user_account_service.dart';
 
-class ShowNoBalanceDialogue extends StatefulWidget {
+class ShowInsufficientCoinsDialogue extends StatefulWidget {
   final SubscriptionPlanModel plan;
   final VoidCallback? onBalanceAdded;
-  const ShowNoBalanceDialogue({super.key, required this.plan, this.onBalanceAdded,});
+  const ShowInsufficientCoinsDialogue({super.key, required this.plan, this.onBalanceAdded,});
 
   @override
-  State<ShowNoBalanceDialogue> createState() => _ShowNoBalanceDialogueState();
+  State<ShowInsufficientCoinsDialogue> createState() => _ShowInsufficientCoinsDialogueState();
 }
 
-class _ShowNoBalanceDialogueState extends State<ShowNoBalanceDialogue> {
+class _ShowInsufficientCoinsDialogueState extends State<ShowInsufficientCoinsDialogue> {
   @override
   Widget build(BuildContext context) {
     return BackdropFilter(

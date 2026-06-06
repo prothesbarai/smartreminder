@@ -4,6 +4,7 @@ import '../service/user_account_service.dart';
 import '../widget/bottom_sheet_planner.dart';
 import '../widget/premium_screen.dart';
 import '../widget/purchase_type_dialog.dart';
+import '../widget/show_add_coins_dialog.dart';
 
 class UserAccountScreen extends StatefulWidget {
   const UserAccountScreen({super.key});
@@ -75,12 +76,13 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   trailing: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6A5AE0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
                     onPressed: () {
-                      // >>> Custom or Direct Add Coin =========================
-                      UserAccountService.addBalance(10);
-                      // <<< Custom or Direct Add Coin =========================
-                      setState(() {});
+                      // >>> Custom or Direct Add Coin Test Only ===============
+                      /*UserAccountService.addBalance(10);
+                      setState(() {});*/
+                      // <<< Custom or Direct Add Coin Test Only  ==============
+                      showAddCoinsDialog(context, onUpdate: () => setState(() {}),);
                     },
-                    child: const Text("+ Add"),
+                    child: const Text("+ Add Coins"),
                   ),
                 ),
               ),
