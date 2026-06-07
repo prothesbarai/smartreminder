@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:smartreminder/core/local_payment/bkash_payment_page.dart';
 import 'package:smartreminder/features/user_account_with_plan/service/user_account_service.dart';
 
 import '../../../core/utils/app_colors.dart';
@@ -122,14 +123,21 @@ class _PremiumScreenState extends State<PremiumScreen> {
                   Column(
                     children: [
                       // >>> Yearly
-                      _PlanCard(label: "Yearly", bdt: "4,000", days: "365", badge: "Best Value", isSelected: _selected == 'yearly', onTap: () => setState(() => _selected = 'yearly'),),
+                      _PlanCard(
+                        label: _plans['yearly']!['label'] as String,
+                        bdt: double.parse(_plans['yearly']!['bdt'].toString().replaceAll(',', '')),
+                        days: _plans['yearly']!['days'] as String,
+                        badge: _plans['yearly']!['badge'],
+                        isSelected: _selected == 'yearly',
+                        onTap: () => setState(() => _selected = 'yearly'),
+                      ),
                       SizedBox(height: 12.h),
                       // >>>> Monthly + Weekly
                       Row(
                         children: [
-                          Expanded(child: _PlanCard(label: "Monthly", bdt: "1,600", days: "30", isSelected: _selected == 'monthly', onTap: () => setState(() => _selected = 'monthly'),),),
+                          Expanded(child: _PlanCard(label: "Monthly", bdt: 1600, days: "30", isSelected: _selected == 'monthly', onTap: () => setState(() => _selected = 'monthly'),),),
                           SizedBox(width: 12.w),
-                          Expanded(child: _PlanCard(label: "Weekly", bdt: "490", days: "7", isSelected: _selected == 'weekly', onTap: () => setState(() => _selected = 'weekly'),),),
+                          Expanded(child: _PlanCard(label: "Weekly", bdt: 490, days: "7", isSelected: _selected == 'weekly', onTap: () => setState(() => _selected = 'weekly'),),),
                         ],
                       ),
                     ],
@@ -166,7 +174,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height * 0.055,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BkashPaymentPage(amount: double.parse(selected['bdt'].toString().replaceAll(',', '')),bkashNumber: "01317818826",),));
+                      },
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue1,foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.r)), elevation: 0,),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -258,7 +269,7 @@ class _FeatureRow extends StatelessWidget {
 // >>> Plan Card Widget ========================================================
 class _PlanCard extends StatelessWidget {
   final String label;
-  final String bdt;
+  final double bdt;
   final String days;
   final String? badge;
   final bool isSelected;
