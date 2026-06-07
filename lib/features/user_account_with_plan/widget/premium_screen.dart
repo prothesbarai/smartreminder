@@ -152,7 +152,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Your Coin Balance : ", style: TextStyle(color: Color(0xFF555555), fontSize: 13.sp)),
-                        Text("${user.balance} Coins", style: TextStyle(color: Color(0xFF8B6F00), fontSize: 14.sp, fontWeight: FontWeight.w800)),
+                        Text("${user.coinBalance} Coins", style: TextStyle(color: Color(0xFF8B6F00), fontSize: 14.sp, fontWeight: FontWeight.w800)),
                       ],
                     ),
                   ),

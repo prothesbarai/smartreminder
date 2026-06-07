@@ -8,7 +8,7 @@ class UserAccountHiveModel extends HiveObject {
   String userId;
 
   @HiveField(1)
-  double balance;
+  double coinBalance;
 
   @HiveField(2)
   String? activePlanId;
@@ -21,7 +21,7 @@ class UserAccountHiveModel extends HiveObject {
 
   UserAccountHiveModel({
     required this.userId,
-    required this.balance,
+    required this.coinBalance,
     required this.activePlanId,
     this.subscriptionStartDate,
     this.subscriptionDays,

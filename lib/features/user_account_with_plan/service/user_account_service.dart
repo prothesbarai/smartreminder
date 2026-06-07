@@ -13,7 +13,7 @@ class UserAccountService {
     if (data == null) {
       final newUser = UserAccountHiveModel(
         userId: DateTime.now().millisecondsSinceEpoch.toString(),
-        balance: 0.0,
+        coinBalance: 0.0,
         activePlanId: null,
         subscriptionStartDate: null,
         subscriptionDays: null,
@@ -34,16 +34,16 @@ class UserAccountService {
   /// >>> Add balance
   static void addBalance(double amount) {
     final user = getAccount();
-    user.balance += amount;
+    user.coinBalance += amount;
     user.save();
   }
 
   /// >>> Deduct balance
   static bool deductBalance(double amount) {
     final user = getAccount();
-    if (user.balance < amount) return false;
+    if (user.coinBalance < amount) return false;
 
-    user.balance -= amount;
+    user.coinBalance -= amount;
     user.save();
     return true;
   }

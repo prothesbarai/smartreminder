@@ -64,9 +64,9 @@ class PlanService {
     final userBox = HiveService.userAccountBox;
     final user = userBox.get("main_user");
     if (user == null) return false;
-    if (user.balance < plan.price) return false;
+    if (user.coinBalance < plan.price) return false;
     // >>> balance cut
-    user.balance -= plan.price;
+    user.coinBalance -= plan.price;
     // >>> activate selected plan
     user.activePlanId = plan.id;
     user.subscriptionStartDate = DateTime.now();

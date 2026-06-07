@@ -48,7 +48,7 @@ class RewardedAdsHelper {
     return completer.future;
   }
 
-  static Future<RewardResult> show({required int rewardAmount, String rewardType = 'coins'}) async {
+  static Future<RewardResult> show({required double rewardAmount, String rewardType = 'coins'}) async {
     if (_rewardedAd == null) return RewardResult.failed();
 
     final completer = Completer<RewardResult>();

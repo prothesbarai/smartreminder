@@ -24,4 +24,8 @@ class AdsConfig {
 
   /// >>> Only App Open Ads Enable/Disable ( Use When App Open Then Show ads )
   static bool appOpenEnabled = false;
+
+  // >>> Reward Coin Config
+  static const double baseReward = 1;
+  static const List<double> rewardMultipliers = [0.5, 1.0, 1.5, 2.0, 2.5,];
 }

@@ -1,6 +1,6 @@
 class RewardResult {
   final bool success;
-  final int reward;
+  final double reward;
   final String rewardType;
 
   const RewardResult({required this.success, required this.reward, required this.rewardType,});

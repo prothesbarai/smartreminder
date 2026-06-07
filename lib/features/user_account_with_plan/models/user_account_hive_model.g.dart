@@ -18,7 +18,7 @@ class UserAccountHiveModelAdapter extends TypeAdapter<UserAccountHiveModel> {
     };
     return UserAccountHiveModel(
       userId: fields[0] as String,
-      balance: fields[1] as double,
+      coinBalance: fields[1] as double,
       activePlanId: fields[2] as String?,
       subscriptionStartDate: fields[3] as DateTime?,
       subscriptionDays: fields[4] as int?,
@@ -32,7 +32,7 @@ class UserAccountHiveModelAdapter extends TypeAdapter<UserAccountHiveModel> {
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
-      ..write(obj.balance)
+      ..write(obj.coinBalance)
       ..writeByte(2)
       ..write(obj.activePlanId)
       ..writeByte(3)

@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../ads/ads_manager.dart';
+import '../../ads/config/ads_config.dart';
 import '../../ads/models/ads_state.dart';
 import '../../ads/rewarded/rewarded_ads_helper.dart';
 import '../service/user_account_service.dart';
@@ -61,7 +64,7 @@ class _AddCoinsDialog extends StatelessWidget {
                     valueListenable: AdsManager.stateNotifier,
                     builder: (context, _, __) {
                       final user = UserAccountService.getAccount();
-                      return Text("Current Balance: ${user.balance} Coins", style: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.7), fontSize: 13),);
+                      return Text("Current Balance: ${user.coinBalance} Coins", style: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.7), fontSize: 13),);
                     },
                   ),
                 ],
@@ -102,13 +105,17 @@ class _AddCoinsDialog extends StatelessWidget {
                         iconGlowColor: AppColors.gold1,
                         title: "Watch Ad",
                         subtitle: "Watch a short ad and\nearn +50 coins free",
-                        buttonLabel: state.rewardedLoaded ? "Watch (+50)" : "Loading...",
+                        buttonLabel: state.rewardedLoaded ? "Watch Ads" : "Loading...",
                         buttonGradient: AppGradients.gold,
                         buttonGlowColor: AppColors.gold1,
                         isEnabled: state.rewardedLoaded,
                         onTap: state.rewardedLoaded ? () async {
                           Navigator.of(context).pop();
-                          final reward = await RewardedAdsHelper.show(rewardAmount: 50);
+                          final random = Random();
+                          final multiplier = AdsConfig.rewardMultipliers[random.nextInt(AdsConfig.rewardMultipliers.length)];
+                          final rewardCoins = (AdsConfig.baseReward * multiplier);
+
+                          final reward = await RewardedAdsHelper.show(rewardAmount: rewardCoins);
                           if (reward.success) {
                             UserAccountService.addBalance(reward.reward.toDouble());
                             onUpdate?.call();

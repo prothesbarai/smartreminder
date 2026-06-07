@@ -72,7 +72,7 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.account_balance_wallet, color: Colors.deepPurple),
                   title: const Text("Balance", style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: Text("${user.balance} Coins"),
+                  subtitle: Text("${user.coinBalance} Coins"),
                   trailing: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6A5AE0), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),),),
                     onPressed: () {
