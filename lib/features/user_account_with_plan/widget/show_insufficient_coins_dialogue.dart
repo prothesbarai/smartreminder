@@ -4,10 +4,10 @@ import '../../../core/utils/app_colors.dart';
 import '../plan/subscription_plan_model.dart';
 import '../service/user_account_service.dart';
 
+
 class ShowInsufficientCoinsDialogue extends StatefulWidget {
   final SubscriptionPlanModel plan;
-  final VoidCallback? onBalanceAdded;
-  const ShowInsufficientCoinsDialogue({super.key, required this.plan, this.onBalanceAdded,});
+  const ShowInsufficientCoinsDialogue({super.key, required this.plan,});
 
   @override
   State<ShowInsufficientCoinsDialogue> createState() => _ShowInsufficientCoinsDialogueState();
@@ -16,6 +16,7 @@ class ShowInsufficientCoinsDialogue extends StatefulWidget {
 class _ShowInsufficientCoinsDialogueState extends State<ShowInsufficientCoinsDialogue> {
   @override
   Widget build(BuildContext context) {
+    final user = UserAccountService.getAccount();
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
       child: Dialog(
@@ -37,50 +38,50 @@ class _ShowInsufficientCoinsDialogueState extends State<ShowInsufficientCoinsDia
               const Text("Insufficient Balance", style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold,),),
               const SizedBox(height: 10),
 
-              Text.rich(
-                TextSpan(text: "You need ", style: const TextStyle(color: AppColors.textSecondary, fontSize: 14,),
-                  children: [
-                    TextSpan(text: "${widget.plan.price.toInt()} ", style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.bold, fontSize: 15,),),
-                    const TextSpan(text: "coins for "),
-                    TextSpan(text: widget.plan.name, style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold,),),
-                    const TextSpan(text: " plan"),
-                  ],
-                ),
-                textAlign: TextAlign.center,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 14,),
+                      children: [
+                        const TextSpan(text: "Your Balance: "),
+                        TextSpan(text: "${user.coinBalance} Coins", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w700, fontSize: 16,),),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 14,),
+                      children: [
+                        const TextSpan(text: "Plan Cost: "),
+                        TextSpan(text: "${widget.plan.price.toInt()} Coins", style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 15,),),
+                        const TextSpan(text: " • Need "),
+                        TextSpan(text: "${(widget.plan.price.toInt() - user.coinBalance).clamp(0, 999999)} Coins", style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.bold, fontSize: 15,),),
+                        const TextSpan(text: " for "),
+                        TextSpan(text: widget.plan.name, style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.w700,),),
+                        const TextSpan(text: " Plan"),
+                      ],
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 20),
 
               // >>> BUTTONS
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
-                      child: const Text("Cancel"),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Container(
-                      height: 36,
-                      padding: EdgeInsets.zero,
-                      decoration: BoxDecoration(gradient: AppGradients.gold, borderRadius: BorderRadius.circular(14),),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // >>> Custom or Direct Add Coin =================
-                          UserAccountService.addBalance(widget.plan.price);
-                          // <<< Custom or Direct Add Coin =================
-                          widget.onBalanceAdded?.call();
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
-                        child: const Text("Add Coins", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),),
-                      ),
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {Navigator.pop(context);},
+                  style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14),),),
+                  child: const Text("OK"),
+                ),
               ),
             ],
           ),

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../core/utils/app_colors.dart';
 
 
-void showPurchaseTypeDialog(BuildContext context, {required VoidCallback onCoinsSelected, required VoidCallback onPremiumSelected,}) {
+void showUpgradePlanTypeDialog(BuildContext context, {required VoidCallback onCoinsSelected, required VoidCallback onPremiumSelected,}) {
   showDialog(
     context: context,
     barrierColor: Colors.black.withValues(alpha: 0.6),
-    builder: (_) => _PurchaseTypeDialog(onCoinsSelected: onCoinsSelected, onPremiumSelected: onPremiumSelected,),
+    builder: (_) => _UpgradePlanTypeDialog(onCoinsSelected: onCoinsSelected, onPremiumSelected: onPremiumSelected,),
   );
 }
 
-class _PurchaseTypeDialog extends StatelessWidget {
+class _UpgradePlanTypeDialog extends StatelessWidget {
   final VoidCallback onCoinsSelected;
   final VoidCallback onPremiumSelected;
 
-  const _PurchaseTypeDialog({required this.onCoinsSelected, required this.onPremiumSelected,});
+  const _UpgradePlanTypeDialog({required this.onCoinsSelected, required this.onPremiumSelected,});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class _PurchaseTypeDialog extends StatelessWidget {
                     child: const Icon(Icons.workspace_premium_rounded, color: Colors.white, size: 30,),
                   ),
                   const SizedBox(height: 14),
-                  const Text("Upgrade to Premium", style: TextStyle(color: Colors.white,fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: 0.5,),),
+                  const Text("Upgrade Plan", style: TextStyle(color: Colors.white,fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: 0.5,),),
                   const SizedBox(height: 6),
                   Text("Choose how you'd like to unlock\npremium features", textAlign: TextAlign.center, style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 13, height: 1.5,),),
                 ],
@@ -56,13 +58,15 @@ class _PurchaseTypeDialog extends StatelessWidget {
                 children: [
                   // >>> Coins Option ==========================================
                   _OptionCard(
-                    icon: Icons.monetization_on_rounded,
-                    iconColor: const Color(0xFFFFC107),
-                    gradientColors: const [Color(0xFFFFF3CD), Color(0xFFFFE082)],
+                    icon: const FaIcon(FontAwesomeIcons.coins, color: Colors.white, size: 26,),
+                    iconGradient: AppGradients.gold,
+                    iconGlowColor: AppColors.gold1,
                     title: "Pay with Coins",
-                    subtitle: "Use your earned coins to\nunlock premium plans",
+                    subtitle: "Unlock your plans",
                     buttonLabel: "Use Coins",
-                    buttonColor: const Color(0xFFFFA000),
+                    buttonGradient: AppGradients.gold,
+                    buttonGlowColor: AppColors.gold1,
+                    isEnabled: true,
                     onTap: () {Navigator.of(context).pop();onCoinsSelected();},
                   ),
                   // <<< Coins Option ==========================================
@@ -71,13 +75,15 @@ class _PurchaseTypeDialog extends StatelessWidget {
 
                   // >>> Premium Subscription Option ===========================
                   _OptionCard(
-                    icon: Icons.diamond_rounded,
-                    iconColor: const Color(0xFF6A5AE0),
-                    gradientColors: const [Color(0xFFEDE7FF), Color(0xFFD1C4E9)],
-                    title: "Subscribe Premium",
-                    subtitle: "Weekly, Monthly or Yearly\nsubscription plans",
+                    icon: const FaIcon(FontAwesomeIcons.gem, color: Colors.white, size: 26,),
+                    iconGradient: AppGradients.blue,
+                    iconGlowColor: AppColors.blue1,
+                    title: "Subscribe Now",
+                    subtitle: "Subscription plans",
                     buttonLabel: "Subscribe",
-                    buttonColor: const Color(0xFF6A5AE0),
+                    buttonGradient: AppGradients.gold,
+                    buttonGlowColor: AppColors.gold1,
+                    isEnabled: true,
                     onTap: () {Navigator.of(context).pop();onPremiumSelected();},
                   ),
                   // <<< Premium Subscription Option ===========================
@@ -101,16 +107,18 @@ class _PurchaseTypeDialog extends StatelessWidget {
 
 // >>> Option Card =============================================================
 class _OptionCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final List<Color> gradientColors;
+  final Widget icon;
+  final LinearGradient iconGradient;
+  final Color iconGlowColor;
   final String title;
   final String subtitle;
   final String buttonLabel;
-  final Color buttonColor;
+  final LinearGradient buttonGradient;
+  final Color buttonGlowColor;
+  final bool isEnabled;
   final VoidCallback onTap;
 
-  const _OptionCard({required this.icon, required this.iconColor, required this.gradientColors, required this.title, required this.subtitle, required this.buttonLabel, required this.buttonColor, required this.onTap,});
+  const _OptionCard({required this.icon, required this.iconGradient, required this.iconGlowColor, required this.title, required this.subtitle, required this.buttonLabel, required this.buttonGradient,required this.buttonGlowColor,required this.isEnabled, required this.onTap,});
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +131,8 @@ class _OptionCard extends StatelessWidget {
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(gradient: LinearGradient(colors: gradientColors, begin: Alignment.topLeft, end: Alignment.bottomRight,), borderRadius: BorderRadius.circular(14),),
-            child: Icon(icon, color: iconColor, size: 26),
+            decoration: BoxDecoration(gradient: iconGradient, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: iconGlowColor.withValues(alpha: 0.3), blurRadius: 10, spreadRadius: 1)],),
+            child: Center(child: icon,),
           ),
 
           const SizedBox(width: 14),
@@ -148,7 +156,7 @@ class _OptionCard extends StatelessWidget {
             onTap: onTap,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(color: buttonColor, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: buttonColor.withValues(alpha: 0.35), blurRadius: 10, spreadRadius: 1,),],),
+              decoration: BoxDecoration(gradient: isEnabled ? buttonGradient : const LinearGradient(colors: [Colors.grey, Colors.grey]), borderRadius: BorderRadius.circular(20), boxShadow: isEnabled ? [BoxShadow(color: buttonGlowColor.withValues(alpha: 0.35), blurRadius: 10, spreadRadius: 1)] : [],),
               child: Text(buttonLabel, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.3,),),
             ),
           ),

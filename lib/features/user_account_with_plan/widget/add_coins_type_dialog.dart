@@ -1,6 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../ads/ads_manager.dart';
 import '../../ads/config/ads_config.dart';
@@ -9,17 +9,17 @@ import '../../ads/rewarded/rewarded_ads_helper.dart';
 import '../service/user_account_service.dart';
 import 'bottom_sheet_planner.dart';
 
-void showAddCoinsDialog(BuildContext context, {VoidCallback? onUpdate,}) {
+void showAddCoinsTypeDialog(BuildContext context, {VoidCallback? onUpdate,}) {
   showDialog(
     context: context,
     barrierColor: Colors.black.withValues(alpha: 0.7),
-    builder: (_) => _AddCoinsDialog(onUpdate: onUpdate),
+    builder: (_) => _AddCoinsTypeDialog(onUpdate: onUpdate),
   );
 }
 
-class _AddCoinsDialog extends StatelessWidget {
+class _AddCoinsTypeDialog extends StatelessWidget {
   final VoidCallback? onUpdate;
-  const _AddCoinsDialog({this.onUpdate});
+  const _AddCoinsTypeDialog({this.onUpdate});
 
   // >>> Bottom Sheet Subscription Plan List ===================================
   void showBottomSheetPlanner(BuildContext context, {VoidCallback? onUpdate,}) {
@@ -81,30 +81,32 @@ class _AddCoinsDialog extends StatelessWidget {
                   return Column(
                     children: [
 
-                      // >>> Buy Coins Option ==================================
+                      // >>> Buy Plans Option ==================================
                       _OptionCard(
-                        icon: Icons.shopping_bag_rounded,
-                        iconGradient: AppGradients.blue,
-                        iconGlowColor: AppColors.blue1,
+                        icon: const FaIcon(FontAwesomeIcons.coins, color: Colors.white, size: 26,),
+                        iconGradient: AppGradients.gold,
+                        iconGlowColor: AppColors.gold1,
                         title: "Buy Coins",
-                        subtitle: "Purchase coins with\nyour preferred plan",
+                        subtitle: "Purchase coins",
                         buttonLabel: "Buy Now",
-                        buttonGradient: AppGradients.blue,
-                        buttonGlowColor: AppColors.blue1,
+                        buttonGradient: AppGradients.gold,
+                        buttonGlowColor: AppColors.gold1,
                         isEnabled: true,
-                        onTap: () => showBottomSheetPlanner(context),
+                        onTap: (){
+
+                        },
                       ),
-                      // <<< Buy Coins Option ==================================
+                      // <<< Buy Plans Option ==================================
 
                       const SizedBox(height: 12),
 
                       // >>> Watch Rewarded Ad Option ==========================
                       _OptionCard(
-                        icon: Icons.play_circle_fill_rounded,
+                        icon: const FaIcon(FontAwesomeIcons.video, color: Colors.white, size: 26,),
                         iconGradient: AppGradients.gold,
                         iconGlowColor: AppColors.gold1,
                         title: "Watch Ad",
-                        subtitle: "Watch a short ad and\nearn +50 coins free",
+                        subtitle: "Earn coins free",
                         buttonLabel: state.rewardedLoaded ? "Watch Ads" : "Loading...",
                         buttonGradient: AppGradients.gold,
                         buttonGlowColor: AppColors.gold1,
@@ -148,7 +150,7 @@ class _AddCoinsDialog extends StatelessWidget {
 
 // >>> Option Card =============================================================
 class _OptionCard extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final LinearGradient iconGradient;
   final Color iconGlowColor;
   final String title;
@@ -172,7 +174,7 @@ class _OptionCard extends StatelessWidget {
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(gradient: iconGradient, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: iconGlowColor.withValues(alpha: 0.3), blurRadius: 10, spreadRadius: 1)],),
-            child: Icon(icon, color: Colors.white, size: 26),
+            child: Center(child: icon,),
           ),
 
           const SizedBox(width: 14),

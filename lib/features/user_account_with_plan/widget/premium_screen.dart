@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smartreminder/features/user_account_with_plan/service/user_account_service.dart';
+
+import '../../../core/utils/app_colors.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({super.key});
@@ -55,8 +58,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
                               Container(
                                 width: 72.w,
                                 height: 72.h,
-                                decoration: BoxDecoration(color: const Color(0xFFFFC107), shape: BoxShape.circle, boxShadow: [BoxShadow(color: const Color(0xFFFFC107).withValues(alpha: .4), blurRadius: 20,),],),
-                                child: Icon(Icons.workspace_premium_rounded, color: Color(0xFF8B5E00), size: 40.sp,),
+                                decoration: BoxDecoration(gradient: AppGradients.blue, shape: BoxShape.circle, boxShadow: [BoxShadow(color: AppColors.blue1.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 1)],),
+                                child: Center(child: FaIcon(FontAwesomeIcons.gem, color: Colors.white, size: 40.sp,),)
                               ),
                               const SizedBox(height: 8),
                               Text("PREMIUM", style: TextStyle(color: Colors.black, fontSize: 35.sp, fontWeight: FontWeight.w900, letterSpacing: 1.5,),),
@@ -147,12 +150,12 @@ class _PremiumScreenState extends State<PremiumScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 5.h),
                     margin: EdgeInsets.only(bottom: 15.h,top: 15.h),
-                    decoration: BoxDecoration(color: const Color(0xFFFFFDE7), borderRadius: BorderRadius.circular(32.r), border: Border.all(color: const Color(0xFFFFD600)),),
+                    decoration: BoxDecoration(color: AppColors.blue1.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(32.r), border: Border.all(color: AppColors.blue1),),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Your Coin Balance : ", style: TextStyle(color: Color(0xFF555555), fontSize: 13.sp)),
-                        Text("${user.coinBalance} Coins", style: TextStyle(color: Color(0xFF8B6F00), fontSize: 14.sp, fontWeight: FontWeight.w800)),
+                        Text("${user.coinBalance} Coins", style: TextStyle(color: AppColors.blue1.withValues(alpha: 0.9), fontSize: 14.sp, fontWeight: FontWeight.w800)),
                       ],
                     ),
                   ),
@@ -164,7 +167,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     height: MediaQuery.of(context).size.height * 0.055,
                     child: ElevatedButton(
                       onPressed: () {},
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA000),foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.r)), elevation: 0,),
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue1,foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.r)), elevation: 0,),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -240,7 +243,7 @@ class _FeatureRow extends StatelessWidget {
       children: [
         Container(
           width: 26.w, height: 26.h,
-          decoration: const BoxDecoration(color: Color(0xFFFFA000), shape: BoxShape.circle),
+          decoration: const BoxDecoration(color: AppColors.blue1, shape: BoxShape.circle),
           child: const Icon(Icons.check, color: Colors.white, size: 16),
         ),
         const SizedBox(width: 12),
@@ -274,7 +277,7 @@ class _PlanCard extends StatelessWidget {
           Container(
             margin: badge != null ? EdgeInsets.only(top: 10.h) : EdgeInsets.zero,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h,),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14.r), border: Border.all(color: isSelected ? const Color(0xFFFFA000) : const Color(0xFFE0E0E0), width: isSelected ? 2 : 1,), boxShadow: isSelected ? [BoxShadow(color: const Color(0xFFFFA000).withValues(alpha: 0.15), blurRadius: 12.r, spreadRadius: 2,)] : [],),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14.r), border: Border.all(color: isSelected ? AppColors.blue1 : const Color(0xFFE0E0E0), width: isSelected ? 2 : 1,), boxShadow: isSelected ? [BoxShadow(color: AppColors.blue1.withValues(alpha: 0.15), blurRadius: 12.r, spreadRadius: 2,)] : [],),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -288,14 +291,14 @@ class _PlanCard extends StatelessWidget {
                   children: [
                     Text(label, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700,),),
                     if (isSelected)...[
-                      Icon(Icons.check_circle, color: const Color(0xFFFFA000), size: 22.sp,),
+                      Icon(Icons.check_circle, color: AppColors.blue1, size: 22.sp,),
                     ],
                   ],
                 ),
                 SizedBox(height: 4.h),
                 Row(
                   children: [
-                    Icon(Icons.monetization_on_rounded, size: 14.sp, color: const Color(0xFFFFA000),),
+                    Icon(Icons.monetization_on_rounded, size: 14.sp, color: AppColors.blue1,),
                     SizedBox(width: 4.w),
                     Text("$bdt BDT", style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600,),),
                   ],
@@ -318,8 +321,8 @@ class _PlanCard extends StatelessWidget {
                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.r),),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h,),
-                  decoration: BoxDecoration(color: const Color(0xFFFFF9C4), borderRadius: BorderRadius.circular(20.r), border: Border.all(color: const Color(0xFFFFD600),),),
-                  child: Text(badge!, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700, color: const Color(0xFF8B6F00),),),
+                  decoration: BoxDecoration(color: AppColors.blue1, borderRadius: BorderRadius.circular(20.r), border: Border.all(color: AppColors.blue1,),),
+                  child: Text(badge!, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700, color: Colors.white,),),
                 ),
               ),
             ),

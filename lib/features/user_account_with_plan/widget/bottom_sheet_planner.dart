@@ -100,16 +100,16 @@ class _BottomSheetPlannerState extends State<BottomSheetPlanner> {
                           child: ElevatedButton(
                             onPressed: () {
                               final success = PlanService.buyPlan(plan: plan);
-                              Navigator.pop(context);
                               if (!success) {
                                 showDialog(
                                   context: context,
                                   barrierColor: Colors.black.withValues(alpha: 0.7),
-                                  builder: (_) => ShowInsufficientCoinsDialogue(plan: plan, onBalanceAdded: () {setState(() {});},),
+                                  builder: (_) => ShowInsufficientCoinsDialogue(plan: plan,),
                                 );
-                              }else {
-                                widget.onUpdate?.call();
+                                return;
                               }
+                              Navigator.pop(context);
+                              widget.onUpdate?.call();
                             },
                             style: ElevatedButton.styleFrom(elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 14,), backgroundColor: Colors.transparent, shadowColor: Colors.transparent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),),
                             child: Ink(

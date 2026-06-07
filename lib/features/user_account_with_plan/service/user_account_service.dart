@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:smartreminder/core/service/hive_service.dart';
 import '../models/user_account_hive_model.dart';
 
@@ -5,6 +6,7 @@ class UserAccountService {
 
   static final box = HiveService.userAccountBox;
   static const String key = "main_user";
+  static final ValueNotifier<UserAccountHiveModel> notifier = ValueNotifier(getAccount());
 
   /// >>> Get or create user
   static UserAccountHiveModel getAccount() {
@@ -29,6 +31,7 @@ class UserAccountService {
   /// >>> Save user
   static void update(UserAccountHiveModel user) {
     box.put(key, user);
+    notifier.value = user;
   }
 
   /// >>> Add balance
@@ -36,6 +39,7 @@ class UserAccountService {
     final user = getAccount();
     user.coinBalance += amount;
     user.save();
+    notifier.value = user;
   }
 
   /// >>> Deduct balance
@@ -45,6 +49,7 @@ class UserAccountService {
 
     user.coinBalance -= amount;
     user.save();
+    notifier.value = user;
     return true;
   }
 
@@ -57,5 +62,6 @@ class UserAccountService {
     user.subscriptionDays = null;
 
     user.save();
+    notifier.value = user;
   }
 }
