@@ -5,8 +5,12 @@ import 'package:flutter/services.dart';
 class BkashPaymentPage extends StatefulWidget {
   final double amount;
   final String bkashNumber;
+  final String fromPage;
+  final String buyType;
+  final String packageName;
+  final String? accessDays;
 
-  const BkashPaymentPage({super.key, required this.amount, required this.bkashNumber,});
+  const BkashPaymentPage({super.key, required this.amount, required this.bkashNumber,required this.fromPage,required this.buyType,required this.packageName,this.accessDays,});
 
   @override
   State<BkashPaymentPage> createState() => _BkashPaymentPageState();

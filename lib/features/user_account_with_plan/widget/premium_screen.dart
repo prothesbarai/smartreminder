@@ -176,7 +176,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BkashPaymentPage(amount: double.parse(selected['bdt'].toString().replaceAll(',', '')),bkashNumber: "01317818826",),));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BkashPaymentPage(amount: double.parse(selected['bdt'].toString().replaceAll(',', '')),bkashNumber: "01317818826",buyType: "Subscription Plan",fromPage: "PREMIUM",packageName: "${_plans['yearly']!['label']}",accessDays: "${_plans['yearly']!['days']}",),));
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue1,foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.r)), elevation: 0,),
                       child: Row(

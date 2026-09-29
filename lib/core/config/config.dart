@@ -49,7 +49,7 @@ class Config {
       return releaseDateForAppVersionPageAndroid;
     }
   }
-/// <<< Dynamic Version Based on Platform ====================================
+  /// <<< Dynamic Version Based on Platform ====================================
 
 
 }
